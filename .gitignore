@@ -1,0 +1,12 @@
+node_modules/
+lib/
+.DS_Store
+**/Pods/
+**/build/
+**/.gradle/
+**/.cxx/
+**/local.properties
+**/xcuserdata/
+**/*.xcuserstate
+**/*.tsbuildinfo
+*.tgz

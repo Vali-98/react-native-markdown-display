@@ -1,0 +1,144 @@
+{
+  "name": "@vali98/react-native-markdown-display",
+  "version": "0.1.0",
+  "description": "Extensible React Native Markdown rendering with a C++ MD4C engine",
+  "main": "./lib/commonjs/index.js",
+  "module": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "release": "semantic-release",
+    "build": "npm run typecheck && bob build",
+    "codegen": "nitrogen",
+    "prepack": "npm run build",
+    "example": "npm --prefix example",
+    "pods": "npm --prefix example run pod",
+    "typecheck:all": "npm run typecheck && npm run typecheck --workspace=vali-markdown-example",
+    "test:native": "cmake -S . -B build/core && cmake --build build/core && ctest --test-dir build/core --output-on-failure",
+    "example:start": "npm run start --workspace=vali-markdown-example",
+    "example:android": "npm run android --workspace=vali-markdown-example",
+    "example:ios": "npm run ios --workspace=vali-markdown-example",
+    "example:pods": "npm run pod --workspace=vali-markdown-example",
+    "patch:legacy": "patch-package --patch-dir example/patches",
+    "test:store": "node --test tests/DocumentStore.test.cjs",
+    "test:quotes": "node --test tests/LegacyQuotes.test.cjs",
+    "test:controller": "node --test tests/MarkdownController.test.cjs",
+    "test:legacy-performance": "node --test tests/LegacyPerformance.test.cjs",
+    "test:reveal": "node --test tests/RevealPlan.test.cjs tests/AnimationSettings.test.cjs"
+  },
+  "keywords": [
+    "react-native",
+    "markdown",
+    "nitro",
+    "streaming"
+  ],
+  "files": [
+    "src",
+    "react-native.config.js",
+    "lib",
+    "nitrogen",
+    "cpp",
+    "nitro.json",
+    "android/build.gradle",
+    "android/fix-prefab.gradle",
+    "android/gradle.properties",
+    "android/CMakeLists.txt",
+    "android/src",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.mm",
+    "ios/**/*.cpp",
+    "ios/**/*.swift",
+    "app.plugin.js",
+    "*.podspec",
+    "README.md",
+    "vendor"
+  ],
+  "repository": "https://github.com/Vali-98/react-native-markdown-display.git",
+  "author": "Vali98",
+  "license": "MIT",
+  "bugs": "https://github.com/Vali-98/react-native-markdown-display/issues",
+  "homepage": "https://github.com/Vali-98/react-native-markdown-display#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@jamesacarr/eslint-formatter-github-actions": "^0.2.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/jest": "^29.5.12",
+    "@types/react": "19.2.0",
+    "conventional-changelog-conventionalcommits": "^10.2.1",
+    "nitrogen": "0.37.2",
+    "patch-package": "^8.0.1",
+    "react": "19.2.3",
+    "react-native": "0.86.0",
+    "react-native-builder-bob": "^0.40.18",
+    "react-native-nitro-modules": "0.37.2",
+    "react-native-reanimated": "^4.7.1",
+    "react-native-worklets": "^0.13.1",
+    "semantic-release": "^25.0.7",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-nitro-modules": "^0.37.2",
+    "react-native-reanimated": "^4.7.1",
+    "react-native-worklets": "^0.13.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@react-native",
+      "prettier"
+    ],
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "warn",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false,
+    "semi": false
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.json"
+        }
+      ]
+    ]
+  },
+  "workspaces": [
+    "example"
+  ]
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "parse": 9.34941699996125,
+    "basicRender": 29.10467000026256,
+    "customRender": 35.601836000569165,
+    "basicLayout": 403.2457089999225,
+    "customLayout": 403.5448750000214
+  },
+  {
+    "parse": 61.351082999957725,
+    "basicRender": 6.303172999876551,
+    "customRender": 4.694998000282794,
+    "basicLayout": 37.7459159999853,
+    "customLayout": 37.932582999928854
+  },
+  {
+    "parse": 11.294916999991983,
+    "basicRender": 3.895168000133708,
+    "customRender": 5.17125100037083,
+    "basicLayout": 22.812125000054948,
+    "customLayout": 23.237958000041544
+  },
+  {
+    "parse": 9.538125000079162,
+    "basicRender": 5.68220099969767,
+    "customRender": 5.532241999055259,
+    "basicLayout": 25.20766700000968,
+    "customLayout": 25.3509999999078
+  },
+  {
+    "parse": 11.113292000023648,
+    "basicRender": 3.792449999949895,
+    "customRender": 4.429452999611385,
+    "basicLayout": 22.832500000018626,
+    "customLayout": 22.915416999952868
+  },
+  {
+    "parse": 9.992166999960318,
+    "basicRender": 4.4234170007985085,
+    "customRender": 4.599371000542305,
+    "basicLayout": 23.04775000002701,
+    "customLayout": 23.172125000040978
+  }
+]

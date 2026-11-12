@@ -1,0 +1,106 @@
+diff --git a/node_modules/react-native-markdown-display/src/lib/AstRenderer.js b/node_modules/react-native-markdown-display/src/lib/AstRenderer.js
+--- a/node_modules/react-native-markdown-display/src/lib/AstRenderer.js
++++ b/node_modules/react-native-markdown-display/src/lib/AstRenderer.js
+@@ -180,7 +180,7 @@
+    * @return {*}
+    */
+   render = (nodes) => {
+-    const root = {type: 'body', key: getUniqueID(), children: nodes};
++    const root = {type: 'body', key: 'root', children: nodes};
+     return this.renderNode(root, [], true);
+   };
+ }
+diff --git a/node_modules/react-native-markdown-display/src/lib/util/tokensToAST.js b/node_modules/react-native-markdown-display/src/lib/util/tokensToAST.js
+--- a/node_modules/react-native-markdown-display/src/lib/util/tokensToAST.js
++++ b/node_modules/react-native-markdown-display/src/lib/util/tokensToAST.js
+@@ -27,7 +27,7 @@
+     sourceMeta: token.meta,
+     block: token.block,
+     markup: token.markup,
+-    key: getUniqueID() + '_' + type,
++    key: tokenIndex,
+     content,
+     tokenIndex,
+     index: 0,
+diff --git a/node_modules/react-native-markdown-display/src/lib/parser.js b/node_modules/react-native-markdown-display/src/lib/parser.js
+--- a/node_modules/react-native-markdown-display/src/lib/parser.js
++++ b/node_modules/react-native-markdown-display/src/lib/parser.js
+@@ -11,7 +11,28 @@
+  * @param {AstRenderer} [markdownIt]
+  * @return {View}
+  */
+-export default function parser(source, renderer, markdownIt) {
++export default function parser(source, renderer, markdownIt, onPerformance) {
++  if (onPerformance && !Array.isArray(source)) {
++    const start = performance.now();
++    let mark = start;
++    const stages = {};
++    const measure = (name, operation) => {
++      const value = operation();
++      const now = performance.now();
++      stages[name] = now - mark;
++      mark = now;
++      return value;
++    };
++    let tokens = measure('tokenizeMs', () => stringToTokens(source, markdownIt));
++    tokens = measure('cleanupMs', () => cleanupTokens(tokens));
++    tokens = measure('groupMs', () => groupTextTokens(tokens));
++    tokens = measure('listTransformMs', () => omitListItemParagraph(tokens));
++    const ast = measure('astMs', () => tokensToAST(tokens));
++    const result = measure('elementsMs', () => renderer(ast));
++    stages.totalMs = performance.now() - start;
++    onPerformance(stages);
++    return result;
++  }
+   if (Array.isArray(source)) {
+     return renderer(source);
+   }
+diff --git a/node_modules/react-native-markdown-display/src/index.js b/node_modules/react-native-markdown-display/src/index.js
+--- a/node_modules/react-native-markdown-display/src/index.js
++++ b/node_modules/react-native-markdown-display/src/index.js
+@@ -151,6 +151,7 @@
+     ],
+     defaultImageHandler = 'https://',
+     debugPrintTree = false,
++    onPerformance,
+   }) => {
+     const momoizedRenderer = useMemo(
+       () =>
+@@ -182,7 +183,7 @@
+ 
+     const momoizedParser = useMemo(() => markdownit, [markdownit]);
+ 
+-    return parser(children, momoizedRenderer.render, momoizedParser);
++    return parser(children, momoizedRenderer.render, momoizedParser, onPerformance);
+   },
+ );
+ 
+diff --git a/node_modules/react-native-markdown-display/src/index.d.ts b/node_modules/react-native-markdown-display/src/index.d.ts
+--- a/node_modules/react-native-markdown-display/src/index.d.ts
++++ b/node_modules/react-native-markdown-display/src/index.d.ts
+@@ -72,6 +72,7 @@
+   source: string,
+   renderer: (node: ASTNode) => View,
+   parser: MarkdownParser,
++  onPerformance?: (measurement: LegacyPerformance) => void,
+ ): any;
+ 
+ export function stringToTokens(
+@@ -81,7 +82,17 @@
+ 
+ export function tokensToAST(tokens: ReadonlyArray<Token>): ASTNode[];
+ 
++export interface LegacyPerformance {
++  tokenizeMs: number;
++  cleanupMs: number;
++  groupMs: number;
++  listTransformMs: number;
++  astMs: number;
++  elementsMs: number;
++  totalMs: number;
++}
+ export interface MarkdownProps {
++  onPerformance?: (measurement: LegacyPerformance) => void;
+   rules?: RenderRules;
+   style?: StyleSheet.NamedStyles<any>;
+   renderer?: AstRenderer;
