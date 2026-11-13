@@ -1,0 +1,23 @@
+{
+  "uiViewClassName": "MarkdownInputView",
+  "supportsRawText": false,
+  "bubblingEventTypes": {},
+  "directEventTypes": {},
+  "validAttributes": {
+    "state": true,
+    "previewSizes": true,
+    "placeholder": true,
+    "textColor": true,
+    "delimiterColor": true,
+    "fontSize": true,
+    "editable": true,
+    "previews": true,
+    "typographer": true,
+    "quoteColor": true,
+    "linkColor": true,
+    "onChange": true,
+    "onSelection": true,
+    "onBlocks": true,
+    "hybridRef": true
+  }
+}

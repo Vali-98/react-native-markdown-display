@@ -18,6 +18,12 @@
         "language": "c++",
         "implementationClassName": "HybridMarkdownEngine"
       }
+    },
+    "MarkdownInputView": {
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridMarkdownInputView"
+      }
     }
   },
   "ignorePaths": [

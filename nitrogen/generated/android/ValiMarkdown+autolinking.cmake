@@ -34,8 +34,11 @@ target_sources(
   ../nitrogen/generated/android/ValiMarkdownOnLoad.cpp
   # Shared Nitrogen C++ sources
   ../nitrogen/generated/shared/c++/HybridMarkdownEngineSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridMarkdownInputViewSpec.cpp
+  ../nitrogen/generated/shared/c++/views/HybridMarkdownInputViewComponent.cpp
   # Android-specific Nitrogen C++ sources
-  
+  ../nitrogen/generated/android/c++/JHybridMarkdownInputViewSpec.cpp
+  ../nitrogen/generated/android/c++/views/JHybridMarkdownInputViewStateUpdater.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

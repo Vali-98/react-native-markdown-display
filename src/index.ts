@@ -11,3 +11,6 @@ export { Markdown as default } from './Markdown'
 export type { UpdateMeasurement, MarkdownPerformanceEvent } from './MarkdownController'
 
 export type { MarkdownAnimationOptions, MarkdownAnimation } from './AnimationSettings'
+
+export { MarkdownInput } from './MarkdownInput'
+export type { MarkdownInputProps, MarkdownInputRef } from './MarkdownInput'

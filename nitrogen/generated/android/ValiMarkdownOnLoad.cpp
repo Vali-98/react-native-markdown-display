@@ -15,7 +15,13 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
+#include "JHybridMarkdownInputViewSpec.hpp"
+#include "JFunc_void_EditorChange.hpp"
+#include "JFunc_void_EditorSelection.hpp"
+#include "JFunc_void_EditorLayout.hpp"
+#include "views/JHybridMarkdownInputViewStateUpdater.hpp"
 #include "HybridMarkdownEngine.hpp"
+#include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::markdown {
 
@@ -25,14 +31,25 @@ int initialize(JavaVM* vm) {
   });
 }
 
-
+struct JHybridMarkdownInputViewSpecImpl: public jni::JavaClass<JHybridMarkdownInputViewSpecImpl, JHybridMarkdownInputViewSpec::JavaPart> {
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/valimarkdown/HybridMarkdownInputView;";
+  static std::shared_ptr<JHybridMarkdownInputViewSpec> create() {
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridMarkdownInputViewSpecImpl::javaobject()>();
+    jni::local_ref<JHybridMarkdownInputViewSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridMarkdownInputViewSpec();
+  }
+};
 
 void registerAllNatives() {
   using namespace margelo::nitro;
   using namespace margelo::nitro::markdown;
 
   // Register native JNI methods
-  
+  margelo::nitro::markdown::JHybridMarkdownInputViewSpec::CxxPart::registerNatives();
+  margelo::nitro::markdown::JFunc_void_EditorChange_cxx::registerNatives();
+  margelo::nitro::markdown::JFunc_void_EditorSelection_cxx::registerNatives();
+  margelo::nitro::markdown::JFunc_void_EditorLayout_cxx::registerNatives();
+  margelo::nitro::markdown::views::JHybridMarkdownInputViewStateUpdater::registerNatives();
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(
@@ -42,6 +59,12 @@ void registerAllNatives() {
                     "The HybridObject \"HybridMarkdownEngine\" is not default-constructible! "
                     "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
       return std::make_shared<HybridMarkdownEngine>();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "MarkdownInputView",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridMarkdownInputViewSpecImpl::create();
     }
   );
 }

@@ -1,7 +1,8 @@
 import React, { Profiler, useRef, useState } from 'react'
-import { Text, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, Text, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import Markdown, { type MarkdownSnapshot, type UpdateMeasurement, type MarkdownAnimation } from '@vali98/react-native-markdown-display'
+import { EditorDemo } from './EditorDemo'
 import { Comparison } from './Comparison'
 import { AnimationControls } from './AnimationControls'
 import { StreamDelayControl } from './StreamDelayControl'
@@ -38,7 +39,7 @@ function Demo({ delay }: { delay: React.RefObject<number> }) {
     <View style={ui.panes}>
       <PreviewPane title={variant === 'custom' ? 'Custom styles & rules' : 'Basic rendering'} streaming={frame.streaming} followKey={frame.run}>
         <Profiler id="preview" onRender={(_, __, duration) => rendered(duration)}>
-          <Markdown key={`${variant}:${frame.run}`} streaming={frame.streaming} animate={animate}
+          <Markdown typographer key={`${variant}:${frame.run}`} streaming={frame.streaming} animate={animate}
             style={variant === 'custom' ? customStyles : undefined}
             renderRules={variant === 'custom' ? markdownRules : undefined}
             onUpdate={updated} onError={value => setError(String(value))}>
@@ -62,14 +63,15 @@ function Demo({ delay }: { delay: React.RefObject<number> }) {
 }
 export default function App() {
   const streamDelay = useRef(100)
-  const [tab, setTab] = useState<'native' | 'legacy'>('native')
-  return <SafeAreaProvider><View style={ui.screen}>
+  const [tab, setTab] = useState<'native' | 'legacy' | 'editor'>('native')
+  return <SafeAreaProvider><KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'height' : 'padding'} style={ui.screen}>
     <SafeAreaView edges={['top', 'left', 'right']} style={ui.topbar}>
       <View style={ui.tabs}>
         <Action title="Preview" selected={tab === 'native'} onPress={() => setTab('native')} />
+        {Platform.OS === 'android' && <Action title="Editor" selected={tab === 'editor'} onPress={() => setTab('editor')} />}
         <Action title="Compare" selected={tab === 'legacy'} onPress={() => setTab('legacy')} />
       </View>
     </SafeAreaView>
-    {tab === 'native' ? <Demo delay={streamDelay} /> : <Comparison sample={markdownTestText} delay={streamDelay} />}
-  </View></SafeAreaProvider>
+    {tab === 'editor' ? <EditorDemo /> : tab === 'native' ? <Demo delay={streamDelay} /> : <Comparison sample={markdownTestText} delay={streamDelay} />}
+  </KeyboardAvoidingView></SafeAreaProvider>
 }

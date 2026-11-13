@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Image, I18nManager, Linking, StyleSheet, Text, View, type ImageStyle, type TextStyle, type ViewStyle } from 'react-native'
 import { resolveAnimation, type MarkdownAnimation, type ResolvedAnimation } from './AnimationSettings'
+import { typographicText } from './Typography'
 import { RevealText, RevealBlock } from './Reveal'
 import { planReveal, revealSlices, type RevealPlan } from './RevealPlan'
 import { createMarkdownDocument } from './DocumentStore'
@@ -45,6 +46,7 @@ const textTypes = new Set(['paragraph', 'strong', 'em', 's', 'code_inline', 'fen
   'double_quote', 'latex_inline', 'latex_block', 'th', 'td', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'heading6'])
 
 export interface MarkdownViewProps {
+  typographer?: boolean
   snapshot: MarkdownSnapshot
   rules?: RenderRules
   styles?: MarkdownStyles
@@ -55,7 +57,7 @@ export interface MarkdownViewProps {
 }
 const emptyRules: RenderRules = {}
 const emptyStyles: MarkdownStyles = {}
-const BlockView = memo(function BlockView({ block, rules, styles: resolved, animation }: { block: MarkdownBlock; rules: RenderRules; styles: MarkdownStyles; animation: ResolvedAnimation | null }) {
+const BlockView = memo(function BlockView({ block, rules, styles: resolved, animation, typographer }: { typographer: boolean; block: MarkdownBlock; rules: RenderRules; styles: MarkdownStyles; animation: ResolvedAnimation | null }) {
   const childrenByParent = useMemo(() => {
     const map = new Map<string, MarkdownNode[]>()
     for (const node of block.nodes) {
@@ -81,20 +83,22 @@ const BlockView = memo(function BlockView({ block, rules, styles: resolved, anim
     return result
   }, [block, plan])
   const hasTextStyle = resolved.text && Object.keys(resolved.text).length > 0
-  function render(node: MarkdownNode, inText = false, inheritedColor = typeof resolved.body?.color === 'string' ? resolved.body.color : '#000000'): ReactNode {
+  function render(node: MarkdownNode, inText = false, inheritedColor = typeof resolved.body?.color === 'string' ? resolved.body.color : '#000000', literal = false): ReactNode {
+    literal ||= ['fence', 'code_inline', 'latex_inline', 'latex_block', 'link'].includes(node.type)
     const ownColor = resolved[node.type]?.color
     const color = typeof ownColor === 'string' ? ownColor : inheritedColor
     // Unknown/custom parents conservatively receive Text-wrapped leaves.
     const textParent = !rules[node.type] && (textTypes.has(node.type) || node.type === 'link')
-    const children = (childrenByParent.get(node.id) ?? []).map(child => render(child, textParent, color))
+    const children = (childrenByParent.get(node.id) ?? []).map(child => render(child, textParent, color, literal))
     const custom = rules[node.type]
     if (custom) return <React.Fragment key={node.id}>{custom({ node, block, children, styles: resolved })}</React.Fragment>
     // Tight-list text can be a direct child of a View (no paragraph node).
     if (node.type === 'text') {
-      const slices = animate && !unsupported && plan.batches.length ? revealSlices(plan, node.content, offsets.get(node.id) ?? 0) : []
+      const displayText = typographer && !literal ? typographicText(node.content) : node.content
+      const slices = displayText === node.content && animate && !unsupported && plan.batches.length ? revealSlices(plan, node.content, offsets.get(node.id) ?? 0) : []
       const content = slices.length ? slices.map(slice => slice.batch
         ? <RevealText key={`${slice.batch.id}:${slice.offset}`} startedAt={slice.batch.startedAt} duration={slice.batch.duration} color={color}>{slice.text}</RevealText>
-        : slice.text) : node.content
+        : slice.text) : displayText
       if (inText && !hasTextStyle) return content
       return <Text key={node.id} style={resolved.text}>{content}</Text>
     }
@@ -123,26 +127,42 @@ const BlockView = memo(function BlockView({ block, rules, styles: resolved, anim
         <View style={resolved[`${kind}_content`]}>{content}</View>
       </View>
     }
+    if (node.type === 'paragraph' && (childrenByParent.get(node.id) ?? []).some(child => child.type === 'latex_block')) {
+      const content: ReactNode[] = []
+      let inline: ReactNode[] = []
+      const flush = () => {
+        if (inline.length) { content.push(<Text key={`inline-${content.length}`} style={resolved.paragraph}>{inline}</Text>); inline = [] }
+      }
+      ;(childrenByParent.get(node.id) ?? []).forEach((child, index) => {
+        if (child.type === 'latex_block') { flush(); content.push(children[index]) }
+        else inline.push(children[index])
+      })
+      flush()
+      return <View key={node.id}>{content}</View>
+    }
     if (textTypes.has(node.type)) return <Text key={node.id} style={resolved[node.type]}>{children}</Text>
     return <View key={node.id} style={resolved[node.type]}>{children}</View>
   }
   const content = <>{(childrenByParent.get('') ?? []).map(node => render(node))}</>
   return unsupported && animate && entered.current.startedAt > 0 ? <RevealBlock startedAt={entered.current.startedAt} duration={entered.current.duration}>{content}</RevealBlock> : content
 })
-export function MarkdownView({ snapshot, rules = emptyRules, styles = emptyStyles, animate = true, direction = 'auto' }: MarkdownViewProps) {
+export function MarkdownView({ snapshot, rules = emptyRules, styles = emptyStyles, animate = true, direction = 'auto', typographer = false }: MarkdownViewProps) {
   const batchDelay = typeof animate === 'object' ? animate.batchDelay : undefined
   const fadeDuration = typeof animate === 'object' ? animate.fadeDuration : undefined
   const enabled = animate !== false
   const animation = useMemo(() => resolveAnimation(enabled ? { batchDelay, fadeDuration } : false), [enabled, batchDelay, fadeDuration])
   const resolved = useMemo(() => {
     const merged = { ...defaults, ...styles }
+    const mathFontSize = merged.paragraph?.fontSize ?? merged.body?.fontSize ?? 16
+    merged.latex_inline = { fontSize: mathFontSize, ...merged.latex_inline }
+    merged.latex_block = { fontSize: mathFontSize, ...merged.latex_block }
     const layoutDirection = direction === 'auto' ? (I18nManager.isRTL ? 'rtl' : 'ltr') : direction
     merged.body = { ...merged.body, direction: layoutDirection }
     for (const type of textTypes) merged[type] = { textAlign: 'auto', writingDirection: direction, ...merged[type] }
     return merged
   }, [styles, direction])
   const children = snapshot.blocks.map(block =>
-    <BlockView key={block.id} block={block} rules={rules} styles={resolved} animation={animation} />
+    <BlockView key={block.id} block={block} rules={rules} styles={resolved} animation={animation} typographer={typographer} />
   )
   if (rules.body) return <>{rules.body({ node: { id: 'body', parentId: '', type: 'body', content: '', destination: '', marker: '', sourceStart: -1, sourceEnd: -1 }, children, styles: resolved })}</>
   return <View style={resolved.body}>{children}</View>
@@ -162,7 +182,7 @@ export type MarkdownProps = Omit<MarkdownViewProps, 'snapshot'> & MarkdownInput 
   onError?: (error: unknown) => void
   onUpdate?: (snapshot: MarkdownSnapshot, measurement: UpdateMeasurement) => void
 }
-export function Markdown({ source, children, style, styles, renderRules, rules, streaming = false, onError, onUpdate, onPerformance, debugTree = false, animate = true, direction = 'auto' }: MarkdownProps) {
+export function Markdown({ source, children, style, styles, renderRules, rules, streaming = false, onError, onUpdate, onPerformance, debugTree = false, animate = true, direction = 'auto', typographer = false }: MarkdownProps) {
   const text = source ?? children ?? ''
   const [snapshot, setSnapshot] = useState<MarkdownSnapshot>()
   const handlers = useRef({ onError, onUpdate, onPerformance })
@@ -183,5 +203,5 @@ export function Markdown({ source, children, style, styles, renderRules, rules, 
       block.nodes.map(node => `${'  '.repeat(node.id.split('/').length - 1)}${node.type}${node.content ? ` ${JSON.stringify(node.content)}` : ''}`).join('\n')).join('\n')
     console.log(`Markdown tree (revision ${snapshot.revision})\n${tree}`)
   }, [snapshot, debugTree])
-  return snapshot ? <MarkdownView snapshot={snapshot} styles={style ?? styles} rules={renderRules ?? rules} animate={animate} direction={direction} /> : null
+  return snapshot ? <MarkdownView snapshot={snapshot} styles={style ?? styles} rules={renderRules ?? rules} animate={animate} direction={direction} typographer={typographer} /> : null
 }

@@ -116,4 +116,12 @@ Text before “quote” text after, then “another “level” inside”.
 "Test *"*
 "Test _"_ test
 
+# Typography
+
+(c) (C) (r) (R) (tm) (TM) (p) (P) +-
+
+test.. test... test..... test?..... test!....
+
+  !!!!!! ???? ,,  -- ---
+
 `

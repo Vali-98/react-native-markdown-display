@@ -252,11 +252,11 @@ export const useMarkdownStyles = () => {
                 },
                 latex_inline: {
                     color: color.chat.text,
-                    fontSize: getModifiedFontSize(20),
+                    fontSize: getModifiedFontSize(18),
                 },
                 latex_block: {
                     color: color.chat.text,
-                    fontSize: getModifiedFontSize(28),
+                    fontSize: getModifiedFontSize(18),
                     marginTop: spacing.l,
                     marginBottom: spacing.sm,
                 },

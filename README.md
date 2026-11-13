@@ -49,6 +49,34 @@ Use `direction="rtl"` for RTL text and list/table layout. Per-element text style
 
 Set `debugTree` to log the displayed tree. `onError` receives parsing errors; `onUpdate` receives displayed snapshots; optional `onPerformance` reports completed and superseded operations.
 
+## Input (Android)
+
+```tsx
+import { useRef, useState } from 'react'
+import { MarkdownInput, type MarkdownInputRef } from '@vali98/react-native-markdown-display'
+
+const [value, setValue] = useState('Some **bold** text')
+const input = useRef<MarkdownInputRef>(null)
+
+<MarkdownInput
+  ref={input}
+  value={value}
+  onChangeText={setValue}
+  style={{ flex: 1 }}
+  markdownStyle={styles}
+  renderRules={rules}
+  delimiterColor="#92979f"
+  previews={true}
+  typographer={false}
+/>
+```
+
+The experimental Android editor keeps Markdown source in a native input and styles inline text while keeping delimiters visible. Top-level math blocks, fenced code and tables use the existing render rules for previews; placing the cursor inside reveals their source. Preview taps activate editing. `markdownStyle` styles previews; `textColor`, `fontSize` and `delimiterColor` style editable text. The ref exposes `focus()`, `blur()` and `activate(sourceOffset)`, with UTF-16 offsets.
+
+Set `previews={false}` for unstyled raw-source editing. `typographer` is off by default and enables display-only symbols and punctuation replacements such as `(c)` → ©, `...` → …, `--` → – and `---` → —. It is also available on `<Markdown>`. The editor reveals original tokens under the cursor and never changes your controlled value; raw mode disables these substitutions. Code, math and link URLs remain literal. Inline quotes are colored; link labels are colored and underlined, with their Markdown syntax muted. Links remain editable rather than opening on tap.
+
+Custom render rules apply to inactive block previews. Inline editing uses native spans; arbitrary React inline components are not supported inside editable text. iOS input is not implemented yet.
+
 ## Example
 
 ```sh

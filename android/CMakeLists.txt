@@ -11,6 +11,8 @@ add_compile_options(-DRN_SERIALIZABLE_STATE=1)
 # Define C++ library and add all sources
 add_library(${PACKAGE_NAME} SHARED 
 	src/main/cpp/cpp-adapter.cpp
+        src/main/cpp/editor-analysis.cpp
+        ../cpp/EditorAnalysis.cpp
 	../cpp/HybridMarkdownEngine.cpp
         ../cpp/Document.cpp
         ../cpp/StreamingRepair.cpp

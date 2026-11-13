@@ -8,6 +8,9 @@ import com.margelo.nitro.valimarkdown.ValiMarkdownOnLoad;
 
 
 public class ValiMarkdownPackage : BaseReactPackage() {
+  override fun createViewManagers(reactContext: ReactApplicationContext): List<com.facebook.react.uimanager.ViewManager<*, *>> =
+    listOf(com.margelo.nitro.valimarkdown.views.HybridMarkdownInputViewManager())
+
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? = null
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider = ReactModuleInfoProvider { emptyMap() }
