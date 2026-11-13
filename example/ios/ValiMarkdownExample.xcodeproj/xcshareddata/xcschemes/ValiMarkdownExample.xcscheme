@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "00E356ED1AD99517003FC87E"
+               BlueprintIdentifier = "5F784656518F33BF8C8E204A"
                BuildableName = "ValiMarkdownExampleTests.xctest"
                BlueprintName = "ValiMarkdownExampleTests"
                ReferencedContainer = "container:ValiMarkdownExample.xcodeproj">

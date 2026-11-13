@@ -109,6 +109,7 @@ int enterBlock(MD_BLOCKTYPE t, void* detail, void* data) {
     b.lists.push_back({true,list.start,list.mark_delimiter});
   }
   b.enter(type);
+  if(t==MD_BLOCK_CODE) b.nodes.back().language=attribute(static_cast<MD_BLOCK_CODE_DETAIL*>(detail)->lang);
   if(t==MD_BLOCK_LI && !b.lists.empty()) {
     auto& list=b.lists.back();
     const auto& item=*static_cast<MD_BLOCK_LI_DETAIL*>(detail);
@@ -151,6 +152,54 @@ int text(MD_TEXTTYPE t, const MD_CHAR* value, MD_SIZE size, void* data) {
   return 0;
 }
 }
+#ifdef VALI_CODE_HIGHLIGHT
+namespace {
+size_t utf16Units(const std::string& text,size_t start,size_t end) {
+  size_t units=0;
+  for(size_t i=start;i<end;) {
+    const auto c=static_cast<unsigned char>(text[i]);const size_t length=c<0x80?1:c<0xe0?2:c<0xf0?3:4;
+    units+=length==4?2:1;i+=length;
+  }
+  return units;
+}
+void highlightFences(std::vector<Node>& nodes,CodeHighlighter& highlighter) {
+  std::vector<Node> result;result.reserve(nodes.size());
+  for(size_t i=0;i<nodes.size();) {
+    const auto& fence=nodes[i];
+    if(fence.type!="fence" || !CodeHighlighter::supports(fence.language)){result.push_back(std::move(nodes[i++]));continue;}
+    size_t end=i+1;std::string code;
+    while(end<nodes.size()&&nodes[end].parentId==fence.id&&nodes[end].type=="text")code+=nodes[end++].content;
+    const auto ranges=highlighter.highlight(fence.id,fence.language,code);
+    result.push_back(fence);size_t offset=0;
+    for(size_t j=i+1;j<end;++j) {
+      const auto& text=nodes[j];size_t cursor=0,part=0;
+      auto emit=[&](size_t stop,const CodeRange* highlight) {
+        if(stop<=cursor)return;
+        Node leaf=text;leaf.id=text.id+"/segment"+std::to_string(part++);leaf.content=text.content.substr(cursor,stop-cursor);
+        if(text.sourceStart>=0) {
+          leaf.sourceStart=text.sourceStart+utf16Units(text.content,0,cursor);
+          leaf.sourceEnd=leaf.sourceStart+utf16Units(text.content,cursor,stop);
+        }
+        if(highlight) {
+          Node span;span.id=leaf.id+"/syntax";span.parentId=text.parentId;span.type=std::string("syntax_")+codeKindName(highlight->kind);
+          leaf.parentId=span.id;leaf.id=span.id+"/0";result.push_back(std::move(span));
+        }
+        result.push_back(std::move(leaf));cursor=stop;
+      };
+      for(const auto& range:ranges) {
+        if(range.end<=offset||range.start>=offset+text.content.size())continue;
+        const size_t start=std::max<size_t>(range.start,offset)-offset;
+        const size_t stop=std::min<size_t>(range.end,offset+text.content.size())-offset;
+        emit(start,nullptr);emit(stop,&range);
+      }
+      emit(text.content.size(),nullptr);offset+=text.content.size();
+    }
+    i=end;
+  }
+  nodes=std::move(result);
+}
+}
+#endif
 Snapshot Document::setSource(std::string source,bool streaming,bool includeSource) {
   source_=std::move(source);streaming_=streaming;finished_=!streaming;++revision_;return parse(includeSource);
 }
@@ -177,6 +226,9 @@ Snapshot Document::parse(bool includeSource) {
   parser.enter_span=enterSpan; parser.leave_span=leaveSpan; parser.text=text;
   if(md_parse(preview.data(),static_cast<MD_SIZE>(preview.size()),&parser,&b)!=0)
     throw std::runtime_error("MD4C parsing failed");
+#ifdef VALI_CODE_HIGHLIGHT
+  highlightFences(b.nodes,highlighter_);
+#endif
   return {{repairMs,elapsed(parseStart)},revision_,includeSource?source_:std::string{},finished_,std::move(b.nodes)};
 }
 namespace {
@@ -184,7 +236,7 @@ bool same(const Block& a,const Block& b,bool ranges=true) {
   if(a.nodes.size()!=b.nodes.size()) return false;
   for(size_t i=0;i<a.nodes.size();++i) {
     const auto& x=a.nodes[i];const auto& y=b.nodes[i];
-    if((ranges && (x.sourceStart!=y.sourceStart || x.sourceEnd!=y.sourceEnd)) || x.id!=y.id || x.parentId!=y.parentId || x.type!=y.type || x.content!=y.content || x.destination!=y.destination || x.marker!=y.marker) return false;
+    if((ranges && (x.sourceStart!=y.sourceStart || x.sourceEnd!=y.sourceEnd)) || x.id!=y.id || x.parentId!=y.parentId || x.type!=y.type || x.content!=y.content || x.destination!=y.destination || x.marker!=y.marker || x.language!=y.language) return false;
   }
   return true;
 }
@@ -195,7 +247,7 @@ uint64_t utf16Length(const std::string& text) {
 }
 size_t fingerprint(const Block& b) {
   size_t hash=0;
-  for(const auto& n:b.nodes) for(const auto* s:{&n.type,&n.content,&n.destination,&n.marker})
+  for(const auto& n:b.nodes) for(const auto* s:{&n.type,&n.content,&n.destination,&n.marker,&n.language})
     hash^=std::hash<std::string>{}(*s)+0x9e3779b9+(hash<<6)+(hash>>2);
   return hash;
 }

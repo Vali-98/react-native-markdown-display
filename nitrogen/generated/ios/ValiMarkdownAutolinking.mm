@@ -7,10 +7,11 @@
 
 #import <Foundation/Foundation.h>
 #import <NitroModules/HybridObjectRegistry.hpp>
-
+#import "ValiMarkdown-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
 #include "HybridMarkdownEngine.hpp"
+#include "HybridMarkdownInputViewSpecSwift.hpp"
 
 @interface ValiMarkdownAutolinking : NSObject
 @end
@@ -28,6 +29,13 @@
                     "The HybridObject \"HybridMarkdownEngine\" is not default-constructible! "
                     "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
       return std::make_shared<HybridMarkdownEngine>();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "MarkdownInputView",
+    []() -> std::shared_ptr<HybridObject> {
+      std::shared_ptr<HybridMarkdownInputViewSpec> hybridObject = ValiMarkdown::ValiMarkdownAutolinking::createMarkdownInputView();
+      return hybridObject;
     }
   );
 }

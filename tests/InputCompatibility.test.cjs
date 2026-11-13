@@ -7,8 +7,10 @@ const native = {
   processColor: color => typeof color === 'number' ? color : parseInt(color.replace('#', ''), 16),
 }
 const output = ts.transpileModule(fs.readFileSync('src/InputCompatibility.ts', 'utf8'), {compilerOptions: {module: ts.ModuleKind.CommonJS}}).outputText
+const syntax = {}
+new Function('exports', ts.transpileModule(fs.readFileSync('src/SyntaxHighlighting.ts', 'utf8'), {compilerOptions: {module: ts.ModuleKind.CommonJS}}).outputText)(syntax)
 const api = {}
-new Function('exports', 'require', output)(api, name => {assert.equal(name, 'react-native'); return native})
+new Function('exports', 'require', output)(api, name => {if(name === './SyntaxHighlighting')return syntax;assert.equal(name, 'react-native'); return native})
 const {inputConfiguration: config, inputStyle: style, inputInlineStyles: inline, inputEvent: event} = api
 
 test('single and multiline submit defaults and explicit precedence match TextInput', () => {
@@ -49,7 +51,7 @@ test('Markdown inline styles carry color, background and font decorations indepe
   assert.equal(link.hasBackground, true)
   assert.equal(link.fontWeight, '700')
   assert.equal(link.decoration, 'none')
-  assert.deepEqual(inline(undefined), [])
+  assert.ok(inline(undefined).every(style => style.kind >= 200))
 })
 test('callbacks use nativeEvent and preserve text, selection and target', () => {
   const change = event({text: 'hello', eventCount: 3}, 42)

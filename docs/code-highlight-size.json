@@ -1,0 +1,97 @@
+{
+  "platform": "Android arm64-v8a",
+  "build": "Gradle release / CMake RelWithDebInfo; NDK 27.1.12297006",
+  "measurement": "libValiMarkdown.so stripped with llvm-strip --strip-unneeded; gzip level 9, mtime 0. Single library, not APK or download size.",
+  "configurations": [
+    {
+      "configuration": "disabled",
+      "architecture": "arm64-v8a",
+      "build": "Gradle release / CMake RelWithDebInfo",
+      "unstrippedBytes": 20143992,
+      "strippedBytes": 1578360,
+      "gzipBytes": 378544,
+      "languages": [],
+      "grammarCodeAndData": {}
+    },
+    {
+      "configuration": "four",
+      "architecture": "arm64-v8a",
+      "build": "Gradle release / CMake RelWithDebInfo",
+      "unstrippedBytes": 25381288,
+      "strippedBytes": 4165000,
+      "gzipBytes": 749193,
+      "languages": [
+        "javascript",
+        "typescript",
+        "python",
+        "json"
+      ],
+      "grammarCodeAndData": {
+        "json-parser": 5770,
+        "python-parser": 451554,
+        "javascript-parser": 409716,
+        "python-scanner": 3188,
+        "typescript-scanner": 2408,
+        "javascript-scanner": 2816,
+        "typescript-parser": 1409664,
+        "tree-sitter-runtime": 151671
+      }
+    },
+    {
+      "configuration": "fifteen",
+      "architecture": "arm64-v8a",
+      "build": "Gradle release / CMake RelWithDebInfo",
+      "unstrippedBytes": 36069496,
+      "strippedBytes": 13976744,
+      "gzipBytes": 1802096,
+      "languages": [
+        "json",
+        "html",
+        "css",
+        "markdown",
+        "yaml",
+        "go",
+        "java",
+        "javascript",
+        "python",
+        "c",
+        "rust",
+        "bash",
+        "typescript",
+        "tsx",
+        "cpp"
+      ],
+      "grammarCodeAndData": {
+        "bash-scanner": 10364,
+        "yaml-parser": 168073,
+        "markdown-scanner": 15009,
+        "json-parser": 5770,
+        "python-parser": 451554,
+        "rust-scanner": 2536,
+        "bash-parser": 1352752,
+        "go-parser": 218032,
+        "java-parser": 413268,
+        "javascript-parser": 409716,
+        "python-scanner": 3188,
+        "typescript-scanner": 2408,
+        "yaml-scanner": 21824,
+        "cpp-parser": 3434462,
+        "tsx-scanner": 2408,
+        "html-parser": 11588,
+        "css-scanner": 772,
+        "javascript-scanner": 2816,
+        "tsx-parser": 1442636,
+        "markdown-parser": 377321,
+        "markdown-inline-scanner": 1976,
+        "typescript-parser": 1409664,
+        "rust-parser": 1112829,
+        "cpp-scanner": 756,
+        "tree-sitter-runtime": 151671,
+        "css-parser": 128830,
+        "html-scanner": 6719,
+        "markdown-inline-parser": 381303,
+        "c-parser": 627880
+      }
+    }
+  ]
+}

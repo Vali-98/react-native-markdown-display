@@ -196,6 +196,18 @@ export const useMarkdownStyles = () => {
                     marginTop: spacing.sm,
                 },
 
+                // Code highlighting (also used by native editable spans).
+                syntax_keyword: { color: '#c678dd' },
+                syntax_string: { color: '#74a95b' },
+                syntax_comment: { color: '#858b98', fontStyle: 'italic' },
+                syntax_number: { color: '#d19a66' },
+                syntax_function: { color: '#61afef' },
+                syntax_type: { color: '#c5a254' },
+                syntax_property: { color: '#d19a66' },
+                syntax_constant: { color: '#c5a254' },
+                syntax_operator: { color: '#7ba1a8' },
+                syntax_punctuation: { color: '#8c95a5' },
+
                 // Tables
                 table: {
                     borderWidth: 2,

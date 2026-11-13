@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Image, I18nManager, Linking, StyleSheet, Text, View, type ImageStyle, type TextStyle, type ViewStyle } from 'react-native'
 import { resolveAnimation, type MarkdownAnimation, type ResolvedAnimation } from './AnimationSettings'
+import { syntaxStyles } from './SyntaxHighlighting'
 import { typographicText } from './Typography'
 import { RevealText, RevealBlock } from './Reveal'
 import { planReveal, revealSlices, type RevealPlan } from './RevealPlan'
@@ -22,6 +23,7 @@ export interface RenderContext {
 export type RenderRule = (context: RenderContext) => ReactNode
 export type RenderRules = Record<string, RenderRule>
 const defaults = StyleSheet.create({
+  ...syntaxStyles,
   body: { gap: 8 }, paragraph: { fontSize: 16 }, strong: { fontWeight: 'bold' },
   em: { fontStyle: 'italic' }, s: { textDecorationLine: 'line-through' },
   code_inline: { fontFamily: 'monospace' }, fence: { fontFamily: 'monospace' },
@@ -43,7 +45,7 @@ const defaults = StyleSheet.create({
 const blockFadeTypes = new Set(['fence', 'table', 'latex_inline', 'latex_block', 'image', 'code_inline'])
 const blockTypes = new Set(['paragraph', 'bullet_list', 'ordered_list', 'blockquote', 'fence', 'table', 'hr', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'heading6'])
 const textTypes = new Set(['paragraph', 'strong', 'em', 's', 'code_inline', 'fence',
-  'double_quote', 'latex_inline', 'latex_block', 'th', 'td', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'heading6'])
+  ...Object.keys(syntaxStyles), 'double_quote', 'latex_inline', 'latex_block', 'th', 'td', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'heading6'])
 
 export interface MarkdownViewProps {
   typographer?: boolean

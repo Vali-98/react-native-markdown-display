@@ -54,19 +54,19 @@ std::vector<EditorRange> analyzeEditor(const std::u16string& source) {
       if(closed&&last>=lines.size())last=i;
       if(!closed)last=lines.size()-1;
       const int end=lines[last].end;
-      blocks.push_back({line.start,end,fence?21:22});add(line.start,end,4);add(p,p+opener,0);
+      blocks.push_back({line.start,end,fence?21:22});add(line.start,end,8);add(p,p+opener,0);
       if(closeStart>=0)add(closeStart,fence?lines[last].end:closeStart+2,0);
       i=last;continue;
     }
     if(i+1<lines.size()&&source.substr(line.start,line.end-line.start).find(u'|')!=std::u16string::npos&&separator(source,lines[i+1])) {
       size_t last=i+1;
       while(last+1<lines.size()&&source.substr(lines[last+1].start,lines[last+1].end-lines[last+1].start).find(u'|')!=std::u16string::npos)++last;
-      blocks.push_back({line.start,lines[last].end,23});add(line.start,lines[last].end,4);add(lines[i+1].start,lines[i+1].end,0);i=last;continue;
+      blocks.push_back({line.start,lines[last].end,23});add(line.start,lines[last].end,8);add(lines[i+1].start,lines[i+1].end,0);i=last;continue;
     }
     if(p-line.start<=3&&ch=='#'&&run-p<=6&&run<line.end&&blank(source[run])) {add(line.start,line.end,10+run-p);add(p,run,0);}
   }
   // Use MD4C's actual inline grammar, rather than a competing regex parser.
-  Document document;const auto parsed=document.replace(utf8(source),false);
+  static thread_local Document document;const auto parsed=document.replace(utf8(source),false);
   struct Range {int start=std::numeric_limits<int>::max(),end=-1;};
   std::unordered_map<std::string,Range> ranges;
   for(auto it=parsed.nodes.rbegin();it!=parsed.nodes.rend();++it) {
@@ -76,6 +76,11 @@ std::vector<EditorRange> analyzeEditor(const std::u16string& source) {
   }
   for(const auto& node:parsed.nodes) {
     int kind=node.type=="strong"?1:node.type=="em"?2:node.type=="s"?3:node.type=="code_inline"?4:node.type=="double_quote"?5:node.type=="link"?6:node.type=="blockquote"?7:0;
+    if(node.type.rfind("syntax_",0)==0) {
+      const auto r=ranges[node.id];const int category=codeKindIndex(node.type.substr(7));
+      if(category>=0&&r.end>=0)add(r.start,r.end,200+category);
+      continue;
+    }
     if(!kind)continue;
     const auto r=ranges[node.id];if(r.end<0)continue;
     bool protectedBlock=false;for(const auto& b:blocks)if(r.start<b.end&&r.end>b.start){protectedBlock=true;break;}

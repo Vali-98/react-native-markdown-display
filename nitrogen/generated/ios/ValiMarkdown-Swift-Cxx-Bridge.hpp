@@ -8,13 +8,52 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-
+// Forward declaration of `EditorBlock` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorBlock; }
+// Forward declaration of `EditorChange` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorChange; }
+// Forward declaration of `EditorEvent` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorEvent; }
+// Forward declaration of `EditorFocus` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorFocus; }
+// Forward declaration of `EditorInlineStyle` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorInlineStyle; }
+// Forward declaration of `EditorLayout` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorLayout; }
+// Forward declaration of `EditorMetrics` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorMetrics; }
+// Forward declaration of `EditorPreviewSize` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorPreviewSize; }
+// Forward declaration of `EditorSelection` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorSelection; }
+// Forward declaration of `EditorTouch` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorTouch; }
+// Forward declaration of `HybridMarkdownInputViewSpec` to properly resolve imports.
+namespace margelo::nitro::markdown { class HybridMarkdownInputViewSpec; }
 
 // Forward declarations of Swift defined types
-
+// Forward declaration of `HybridMarkdownInputViewSpec_cxx` to properly resolve imports.
+namespace ValiMarkdown { class HybridMarkdownInputViewSpec_cxx; }
 
 // Include C++ defined types
-
+#include "EditorBlock.hpp"
+#include "EditorChange.hpp"
+#include "EditorEvent.hpp"
+#include "EditorFocus.hpp"
+#include "EditorInlineStyle.hpp"
+#include "EditorLayout.hpp"
+#include "EditorMetrics.hpp"
+#include "EditorPreviewSize.hpp"
+#include "EditorSelection.hpp"
+#include "EditorTouch.hpp"
+#include "HybridMarkdownInputViewSpec.hpp"
+#include <NitroModules/Result.hpp>
+#include <exception>
+#include <functional>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -22,6 +61,326 @@
  */
 namespace margelo::nitro::markdown::bridge::swift {
 
+  // pragma MARK: std::vector<EditorInlineStyle>
+  /**
+   * Specialized version of `std::vector<EditorInlineStyle>`.
+   */
+  using std__vector_EditorInlineStyle_ = std::vector<EditorInlineStyle>;
+  inline std::vector<EditorInlineStyle> create_std__vector_EditorInlineStyle_(size_t size) noexcept {
+    std::vector<EditorInlineStyle> vector;
+    vector.reserve(size);
+    return vector;
+  }
   
+  // pragma MARK: std::vector<EditorPreviewSize>
+  /**
+   * Specialized version of `std::vector<EditorPreviewSize>`.
+   */
+  using std__vector_EditorPreviewSize_ = std::vector<EditorPreviewSize>;
+  inline std::vector<EditorPreviewSize> create_std__vector_EditorPreviewSize_(size_t size) noexcept {
+    std::vector<EditorPreviewSize> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::function<void(const EditorChange& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const EditorChange&)>`.
+   */
+  using Func_void_EditorChange = std::function<void(const EditorChange& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const EditorChange& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_EditorChange_Wrapper final {
+  public:
+    explicit Func_void_EditorChange_Wrapper(std::function<void(const EditorChange& /* event */)>&& func): _function(std::make_unique<std::function<void(const EditorChange& /* event */)>>(std::move(func))) {}
+    inline void call(EditorChange event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const EditorChange& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_EditorChange create_Func_void_EditorChange(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_EditorChange_Wrapper wrap_Func_void_EditorChange(Func_void_EditorChange value) noexcept {
+    return Func_void_EditorChange_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const EditorChange& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const EditorChange& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_EditorChange_____event______ = std::optional<std::function<void(const EditorChange& /* event */)>>;
+  inline std::optional<std::function<void(const EditorChange& /* event */)>> create_std__optional_std__function_void_const_EditorChange_____event______(const std::function<void(const EditorChange& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const EditorChange& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_EditorChange_____event______(const std::optional<std::function<void(const EditorChange& /* event */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const EditorChange& /* event */)> get_std__optional_std__function_void_const_EditorChange_____event______(const std::optional<std::function<void(const EditorChange& /* event */)>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::function<void(const EditorSelection& /* selection */)>
+  /**
+   * Specialized version of `std::function<void(const EditorSelection&)>`.
+   */
+  using Func_void_EditorSelection = std::function<void(const EditorSelection& /* selection */)>;
+  /**
+   * Wrapper class for a `std::function<void(const EditorSelection& / * selection * /)>`, this can be used from Swift.
+   */
+  class Func_void_EditorSelection_Wrapper final {
+  public:
+    explicit Func_void_EditorSelection_Wrapper(std::function<void(const EditorSelection& /* selection */)>&& func): _function(std::make_unique<std::function<void(const EditorSelection& /* selection */)>>(std::move(func))) {}
+    inline void call(EditorSelection selection) const noexcept {
+      _function->operator()(selection);
+    }
+  private:
+    std::unique_ptr<std::function<void(const EditorSelection& /* selection */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_EditorSelection create_Func_void_EditorSelection(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_EditorSelection_Wrapper wrap_Func_void_EditorSelection(Func_void_EditorSelection value) noexcept {
+    return Func_void_EditorSelection_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const EditorSelection& /* selection */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const EditorSelection& / * selection * /)>>`.
+   */
+  using std__optional_std__function_void_const_EditorSelection_____selection______ = std::optional<std::function<void(const EditorSelection& /* selection */)>>;
+  inline std::optional<std::function<void(const EditorSelection& /* selection */)>> create_std__optional_std__function_void_const_EditorSelection_____selection______(const std::function<void(const EditorSelection& /* selection */)>& value) noexcept {
+    return std::optional<std::function<void(const EditorSelection& /* selection */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_EditorSelection_____selection______(const std::optional<std::function<void(const EditorSelection& /* selection */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const EditorSelection& /* selection */)> get_std__optional_std__function_void_const_EditorSelection_____selection______(const std::optional<std::function<void(const EditorSelection& /* selection */)>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<EditorBlock>
+  /**
+   * Specialized version of `std::vector<EditorBlock>`.
+   */
+  using std__vector_EditorBlock_ = std::vector<EditorBlock>;
+  inline std::vector<EditorBlock> create_std__vector_EditorBlock_(size_t size) noexcept {
+    std::vector<EditorBlock> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::function<void(const EditorLayout& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const EditorLayout&)>`.
+   */
+  using Func_void_EditorLayout = std::function<void(const EditorLayout& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const EditorLayout& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_EditorLayout_Wrapper final {
+  public:
+    explicit Func_void_EditorLayout_Wrapper(std::function<void(const EditorLayout& /* event */)>&& func): _function(std::make_unique<std::function<void(const EditorLayout& /* event */)>>(std::move(func))) {}
+    inline void call(EditorLayout event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const EditorLayout& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_EditorLayout create_Func_void_EditorLayout(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_EditorLayout_Wrapper wrap_Func_void_EditorLayout(Func_void_EditorLayout value) noexcept {
+    return Func_void_EditorLayout_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const EditorLayout& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const EditorLayout& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_EditorLayout_____event______ = std::optional<std::function<void(const EditorLayout& /* event */)>>;
+  inline std::optional<std::function<void(const EditorLayout& /* event */)>> create_std__optional_std__function_void_const_EditorLayout_____event______(const std::function<void(const EditorLayout& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const EditorLayout& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_EditorLayout_____event______(const std::optional<std::function<void(const EditorLayout& /* event */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const EditorLayout& /* event */)> get_std__optional_std__function_void_const_EditorLayout_____event______(const std::optional<std::function<void(const EditorLayout& /* event */)>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::function<void(const EditorFocus& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const EditorFocus&)>`.
+   */
+  using Func_void_EditorFocus = std::function<void(const EditorFocus& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const EditorFocus& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_EditorFocus_Wrapper final {
+  public:
+    explicit Func_void_EditorFocus_Wrapper(std::function<void(const EditorFocus& /* event */)>&& func): _function(std::make_unique<std::function<void(const EditorFocus& /* event */)>>(std::move(func))) {}
+    inline void call(EditorFocus event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const EditorFocus& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_EditorFocus create_Func_void_EditorFocus(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_EditorFocus_Wrapper wrap_Func_void_EditorFocus(Func_void_EditorFocus value) noexcept {
+    return Func_void_EditorFocus_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const EditorFocus& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const EditorFocus& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_EditorFocus_____event______ = std::optional<std::function<void(const EditorFocus& /* event */)>>;
+  inline std::optional<std::function<void(const EditorFocus& /* event */)>> create_std__optional_std__function_void_const_EditorFocus_____event______(const std::function<void(const EditorFocus& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const EditorFocus& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_EditorFocus_____event______(const std::optional<std::function<void(const EditorFocus& /* event */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const EditorFocus& /* event */)> get_std__optional_std__function_void_const_EditorFocus_____event______(const std::optional<std::function<void(const EditorFocus& /* event */)>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::function<void(const EditorEvent& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const EditorEvent&)>`.
+   */
+  using Func_void_EditorEvent = std::function<void(const EditorEvent& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const EditorEvent& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_EditorEvent_Wrapper final {
+  public:
+    explicit Func_void_EditorEvent_Wrapper(std::function<void(const EditorEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const EditorEvent& /* event */)>>(std::move(func))) {}
+    inline void call(EditorEvent event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const EditorEvent& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_EditorEvent create_Func_void_EditorEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_EditorEvent_Wrapper wrap_Func_void_EditorEvent(Func_void_EditorEvent value) noexcept {
+    return Func_void_EditorEvent_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const EditorEvent& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const EditorEvent& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_EditorEvent_____event______ = std::optional<std::function<void(const EditorEvent& /* event */)>>;
+  inline std::optional<std::function<void(const EditorEvent& /* event */)>> create_std__optional_std__function_void_const_EditorEvent_____event______(const std::function<void(const EditorEvent& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const EditorEvent& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_EditorEvent_____event______(const std::optional<std::function<void(const EditorEvent& /* event */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const EditorEvent& /* event */)> get_std__optional_std__function_void_const_EditorEvent_____event______(const std::optional<std::function<void(const EditorEvent& /* event */)>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::function<void(const EditorTouch& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const EditorTouch&)>`.
+   */
+  using Func_void_EditorTouch = std::function<void(const EditorTouch& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const EditorTouch& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_EditorTouch_Wrapper final {
+  public:
+    explicit Func_void_EditorTouch_Wrapper(std::function<void(const EditorTouch& /* event */)>&& func): _function(std::make_unique<std::function<void(const EditorTouch& /* event */)>>(std::move(func))) {}
+    inline void call(EditorTouch event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const EditorTouch& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_EditorTouch create_Func_void_EditorTouch(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_EditorTouch_Wrapper wrap_Func_void_EditorTouch(Func_void_EditorTouch value) noexcept {
+    return Func_void_EditorTouch_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const EditorTouch& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const EditorTouch& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_EditorTouch_____event______ = std::optional<std::function<void(const EditorTouch& /* event */)>>;
+  inline std::optional<std::function<void(const EditorTouch& /* event */)>> create_std__optional_std__function_void_const_EditorTouch_____event______(const std::function<void(const EditorTouch& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const EditorTouch& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_EditorTouch_____event______(const std::optional<std::function<void(const EditorTouch& /* event */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const EditorTouch& /* event */)> get_std__optional_std__function_void_const_EditorTouch_____event______(const std::optional<std::function<void(const EditorTouch& /* event */)>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::function<void(const EditorMetrics& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const EditorMetrics&)>`.
+   */
+  using Func_void_EditorMetrics = std::function<void(const EditorMetrics& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const EditorMetrics& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_EditorMetrics_Wrapper final {
+  public:
+    explicit Func_void_EditorMetrics_Wrapper(std::function<void(const EditorMetrics& /* event */)>&& func): _function(std::make_unique<std::function<void(const EditorMetrics& /* event */)>>(std::move(func))) {}
+    inline void call(EditorMetrics event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const EditorMetrics& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_EditorMetrics create_Func_void_EditorMetrics(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_EditorMetrics_Wrapper wrap_Func_void_EditorMetrics(Func_void_EditorMetrics value) noexcept {
+    return Func_void_EditorMetrics_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const EditorMetrics& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const EditorMetrics& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_EditorMetrics_____event______ = std::optional<std::function<void(const EditorMetrics& /* event */)>>;
+  inline std::optional<std::function<void(const EditorMetrics& /* event */)>> create_std__optional_std__function_void_const_EditorMetrics_____event______(const std::function<void(const EditorMetrics& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const EditorMetrics& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_EditorMetrics_____event______(const std::optional<std::function<void(const EditorMetrics& /* event */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const EditorMetrics& /* event */)> get_std__optional_std__function_void_const_EditorMetrics_____event______(const std::optional<std::function<void(const EditorMetrics& /* event */)>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridMarkdownInputViewSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridMarkdownInputViewSpec>`.
+   */
+  using std__shared_ptr_HybridMarkdownInputViewSpec_ = std::shared_ptr<HybridMarkdownInputViewSpec>;
+  std::shared_ptr<HybridMarkdownInputViewSpec> create_std__shared_ptr_HybridMarkdownInputViewSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridMarkdownInputViewSpec_(std__shared_ptr_HybridMarkdownInputViewSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridMarkdownInputViewSpec>
+  using std__weak_ptr_HybridMarkdownInputViewSpec_ = std::weak_ptr<HybridMarkdownInputViewSpec>;
+  inline std__weak_ptr_HybridMarkdownInputViewSpec_ weakify_std__shared_ptr_HybridMarkdownInputViewSpec_(const std::shared_ptr<HybridMarkdownInputViewSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<void>
+  using Result_void_ = Result<void>;
+  inline Result_void_ create_Result_void_() noexcept {
+    return Result<void>::withValue();
+  }
+  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
+    return Result<void>::withError(error);
+  }
+  
+  // pragma MARK: Result<bool>
+  using Result_bool_ = Result<bool>;
+  inline Result_bool_ create_Result_bool_(bool value) noexcept {
+    return Result<bool>::withValue(std::move(value));
+  }
+  inline Result_bool_ create_Result_bool_(const std::exception_ptr& error) noexcept {
+    return Result<bool>::withError(error);
+  }
 
 } // namespace margelo::nitro::markdown::bridge::swift

@@ -19,7 +19,7 @@
     "test:native": "cmake -S . -B build/core && cmake --build build/core && ctest --test-dir build/core --output-on-failure",
     "example:start": "npm run start --workspace=vali-markdown-example",
     "example:android": "npm run android --workspace=vali-markdown-example",
-    "example:ios": "npm run ios --workspace=vali-markdown-example",
+    "example:ios": "npm run ios --workspace=vali-markdown-example --",
     "example:pods": "npm run pod --workspace=vali-markdown-example",
     "patch:legacy": "patch-package --patch-dir example/patches",
     "test:store": "node --test tests/DocumentStore.test.cjs",
@@ -28,7 +28,10 @@
     "test:legacy-performance": "node --test tests/LegacyPerformance.test.cjs",
     "test:input": "node --test tests/InputCompatibility.test.cjs tests/MathLayout.test.cjs",
     "test:typography": "node --test tests/Typography.test.cjs",
-    "test:reveal": "node --test tests/RevealPlan.test.cjs tests/AnimationSettings.test.cjs"
+    "test:reveal": "node --test tests/RevealPlan.test.cjs tests/AnimationSettings.test.cjs",
+    "test:highlight": "node --test tests/HighlightConfig.test.cjs",
+    "test:native:highlight": "cmake -S . -B build/highlight -DVALI_MARKDOWN_APP_PACKAGE_JSON=\"$PWD/example/package.json\" && cmake --build build/highlight && ctest --test-dir build/highlight --output-on-failure",
+    "test:ios:projection": "mkdir -p build/ios-tests && xcrun swiftc -module-cache-path build/ios-tests/cache ios/EditorProjection.swift tests/EditorProjectionTest.swift -o build/ios-tests/projection-tests && build/ios-tests/projection-tests"
   },
   "keywords": [
     "react-native",
@@ -56,7 +59,9 @@
     "app.plugin.js",
     "*.podspec",
     "README.md",
-    "vendor"
+    "vendor",
+    "cmake",
+    "scripts/highlight-config.cjs"
   ],
   "repository": "https://github.com/Vali-98/react-native-markdown-display.git",
   "author": "Vali98",

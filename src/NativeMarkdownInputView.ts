@@ -4,6 +4,6 @@ import type { MarkdownInputViewMethods, MarkdownInputViewProps } from './specs/M
 import viewConfig from '../nitrogen/generated/shared/json/MarkdownInputViewConfig.json'
 
 // Keep native registration outside the component's Fast Refresh boundary.
-export const NativeMarkdownInputView = Platform.OS === 'android'
+export const NativeMarkdownInputView = (Platform.OS === 'android' || Platform.OS === 'ios')
   ? getHostComponent<MarkdownInputViewProps, MarkdownInputViewMethods>('MarkdownInputView', () => viewConfig)
   : undefined

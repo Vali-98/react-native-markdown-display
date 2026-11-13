@@ -7,7 +7,9 @@ const pkg = require('../package.json')
 module.exports = {
     project: {
         ios: {
-            automaticPodsInstallation: true,
+            // preios installs pods explicitly, using the installed CocoaPods CLI.
+            // The RN automatic installer requires Bundler and system Ruby.
+            automaticPodsInstallation: false,
         },
     },
     dependencies: {

@@ -8,10 +8,82 @@
 #include "ValiMarkdown-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
-
+#include "HybridMarkdownInputViewSpecSwift.hpp"
+#include "ValiMarkdown-Swift-Cxx-Umbrella.hpp"
+#include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::markdown::bridge::swift {
 
+  // pragma MARK: std::function<void(const EditorChange& /* event */)>
+  Func_void_EditorChange create_Func_void_EditorChange(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = ValiMarkdown::Func_void_EditorChange::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const EditorChange& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
   
+  // pragma MARK: std::function<void(const EditorSelection& /* selection */)>
+  Func_void_EditorSelection create_Func_void_EditorSelection(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = ValiMarkdown::Func_void_EditorSelection::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const EditorSelection& selection) mutable -> void {
+      swiftClosure.call(selection);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const EditorLayout& /* event */)>
+  Func_void_EditorLayout create_Func_void_EditorLayout(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = ValiMarkdown::Func_void_EditorLayout::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const EditorLayout& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const EditorFocus& /* event */)>
+  Func_void_EditorFocus create_Func_void_EditorFocus(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = ValiMarkdown::Func_void_EditorFocus::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const EditorFocus& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const EditorEvent& /* event */)>
+  Func_void_EditorEvent create_Func_void_EditorEvent(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = ValiMarkdown::Func_void_EditorEvent::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const EditorEvent& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const EditorTouch& /* event */)>
+  Func_void_EditorTouch create_Func_void_EditorTouch(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = ValiMarkdown::Func_void_EditorTouch::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const EditorTouch& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const EditorMetrics& /* event */)>
+  Func_void_EditorMetrics create_Func_void_EditorMetrics(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = ValiMarkdown::Func_void_EditorMetrics::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const EditorMetrics& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridMarkdownInputViewSpec>
+  std::shared_ptr<HybridMarkdownInputViewSpec> create_std__shared_ptr_HybridMarkdownInputViewSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    ValiMarkdown::HybridMarkdownInputViewSpec_cxx swiftPart = ValiMarkdown::HybridMarkdownInputViewSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::markdown::HybridMarkdownInputViewSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridMarkdownInputViewSpec_(std__shared_ptr_HybridMarkdownInputViewSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::markdown::HybridMarkdownInputViewSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::markdown::HybridMarkdownInputViewSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridMarkdownInputViewSpec\" is not implemented in Swift!");
+    }
+    #endif
+    ValiMarkdown::HybridMarkdownInputViewSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
 
 } // namespace margelo::nitro::markdown::bridge::swift

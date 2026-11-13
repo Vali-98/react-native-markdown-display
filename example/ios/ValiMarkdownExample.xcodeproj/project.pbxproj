@@ -10,20 +10,42 @@
 		0C80B921A6F3F58F76C31292 /* libPods-ValiMarkdownExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-ValiMarkdownExample.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		803A7AD03F427419F4CF7D42 /* libPods-ValiMarkdownExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF52074FC20D3D0C2EF09104 /* libPods-ValiMarkdownExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		D350DC2AE0E26E4A44DA73A3 /* MarkdownInputTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B275AD8D43DD24846E06B3 /* MarkdownInputTests.swift */; };
+		DDB6B557579F18EE8D02807B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1749ED3863F8FB698B42BDA /* Foundation.framework */; };
+		E90ED3E3F456AF7BBB649A91 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		33DAEA764E7568898FF97D6C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+			remoteInfo = ValiMarkdownExample;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		0A6249D43D59258E10A88AAD /* Pods-ValiMarkdownExample-ValiMarkdownExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValiMarkdownExample-ValiMarkdownExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ValiMarkdownExample-ValiMarkdownExampleTests/Pods-ValiMarkdownExample-ValiMarkdownExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* ValiMarkdownExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ValiMarkdownExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ValiMarkdownExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ValiMarkdownExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = ValiMarkdownExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		21986718B3000DDB877FD9D3 /* Pods-ValiMarkdownExample-ValiMarkdownExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValiMarkdownExample-ValiMarkdownExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ValiMarkdownExample-ValiMarkdownExampleTests/Pods-ValiMarkdownExample-ValiMarkdownExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		31AF7430331B8C9E41201C91 /* Pods-ValiMarkdownExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValiMarkdownExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ValiMarkdownExampleTests/Pods-ValiMarkdownExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-ValiMarkdownExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValiMarkdownExample.debug.xcconfig"; path = "Target Support Files/Pods-ValiMarkdownExample/Pods-ValiMarkdownExample.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-ValiMarkdownExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValiMarkdownExample.release.xcconfig"; path = "Target Support Files/Pods-ValiMarkdownExample/Pods-ValiMarkdownExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-ValiMarkdownExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ValiMarkdownExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		72B275AD8D43DD24846E06B3 /* MarkdownInputTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownInputTests.swift; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ValiMarkdownExample/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ValiMarkdownExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		B3E047D983CCC5641C240E65 /* Pods-ValiMarkdownExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValiMarkdownExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ValiMarkdownExampleTests/Pods-ValiMarkdownExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		BF52074FC20D3D0C2EF09104 /* libPods-ValiMarkdownExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ValiMarkdownExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		EF9B9EEB1155AED5E5091D18 /* ValiMarkdownExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ValiMarkdownExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1749ED3863F8FB698B42BDA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +54,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-ValiMarkdownExample.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2717332EF9581ED8B0A27431 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DDB6B557579F18EE8D02807B /* Foundation.framework in Frameworks */,
+				803A7AD03F427419F4CF7D42 /* libPods-ValiMarkdownExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +86,8 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-ValiMarkdownExample.a */,
+				8AB42649482838D79A466FAC /* iOS */,
+				BF52074FC20D3D0C2EF09104 /* libPods-ValiMarkdownExampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -74,6 +107,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				B1B171489071D2B5433E6C6D /* ValiMarkdownExampleTests */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -84,8 +118,26 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* ValiMarkdownExample.app */,
+				EF9B9EEB1155AED5E5091D18 /* ValiMarkdownExampleTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8AB42649482838D79A466FAC /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				F1749ED3863F8FB698B42BDA /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		B1B171489071D2B5433E6C6D /* ValiMarkdownExampleTests */ = {
+			isa = PBXGroup;
+			children = (
+				72B275AD8D43DD24846E06B3 /* MarkdownInputTests.swift */,
+			);
+			name = ValiMarkdownExampleTests;
+			path = ValiMarkdownExampleTests;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -93,6 +145,10 @@
 			children = (
 				3B4392A12AC88292D35C810B /* Pods-ValiMarkdownExample.debug.xcconfig */,
 				5709B34CF0A7D63546082F79 /* Pods-ValiMarkdownExample.release.xcconfig */,
+				21986718B3000DDB877FD9D3 /* Pods-ValiMarkdownExample-ValiMarkdownExampleTests.release.xcconfig */,
+				0A6249D43D59258E10A88AAD /* Pods-ValiMarkdownExample-ValiMarkdownExampleTests.debug.xcconfig */,
+				31AF7430331B8C9E41201C91 /* Pods-ValiMarkdownExampleTests.release.xcconfig */,
+				B3E047D983CCC5641C240E65 /* Pods-ValiMarkdownExampleTests.debug.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -121,6 +177,25 @@
 			productReference = 13B07F961A680F5B00A75B9A /* ValiMarkdownExample.app */;
 			productType = "com.apple.product-type.application";
 		};
+		5F784656518F33BF8C8E204A /* ValiMarkdownExampleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E56864C15AB4FE899FD3109 /* Build configuration list for PBXNativeTarget "ValiMarkdownExampleTests" */;
+			buildPhases = (
+				897F252765D546652BD08ED4 /* [CP] Check Pods Manifest.lock */,
+				F5A42B24DD854499983DE421 /* Sources */,
+				2717332EF9581ED8B0A27431 /* Frameworks */,
+				E5287EE515EB719E15008809 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6F3FD27AC82AABBEFF7E48EF /* PBXTargetDependency */,
+			);
+			name = ValiMarkdownExampleTests;
+			productName = ValiMarkdownExampleTests;
+			productReference = EF9B9EEB1155AED5E5091D18 /* ValiMarkdownExampleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -148,6 +223,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* ValiMarkdownExample */,
+				5F784656518F33BF8C8E204A /* ValiMarkdownExampleTests */,
 			);
 		};
 /* End PBXProject section */
@@ -159,6 +235,14 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				E90ED3E3F456AF7BBB649A91 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E5287EE515EB719E15008809 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +280,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ValiMarkdownExample/Pods-ValiMarkdownExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		897F252765D546652BD08ED4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ValiMarkdownExampleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
@@ -248,7 +354,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F5A42B24DD854499983DE421 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D350DC2AE0E26E4A44DA73A3 /* MarkdownInputTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6F3FD27AC82AABBEFF7E48EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ValiMarkdownExample;
+			target = 13B07F861A680F5B00A75B9A /* ValiMarkdownExample */;
+			targetProxy = 33DAEA764E7568898FF97D6C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -271,7 +394,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.valimarkdownexample";
+				PRODUCT_BUNDLE_IDENTIFIER = com.valimarkdownexample;
 				PRODUCT_NAME = ValiMarkdownExample;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -300,7 +423,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.valimarkdownexample";
+				PRODUCT_BUNDLE_IDENTIFIER = com.valimarkdownexample;
 				PRODUCT_NAME = ValiMarkdownExample;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_VERSION = 5.0;
@@ -370,6 +493,10 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -377,8 +504,14 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
+				PODFILE_DIR = "$(SRCROOT)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -435,6 +568,10 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -442,8 +579,64 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
+				PODFILE_DIR = "$(SRCROOT)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
+				USE_HERMES = true;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		90656FBEB986FD2B5A374096 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3E047D983CCC5641C240E65 /* Pods-ValiMarkdownExampleTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "$(inherited)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)/Headers/Private/NitroModules",
+					"$(PODS_ROOT)/Headers/Private/ValiMarkdown",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vali.markdown.editor.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ValiMarkdownExample.app/ValiMarkdownExample";
+			};
+			name = Debug;
+		};
+		E3C929D89A934136E7E92CBE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31AF7430331B8C9E41201C91 /* Pods-ValiMarkdownExampleTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "$(inherited)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)/Headers/Private/NitroModules",
+					"$(PODS_ROOT)/Headers/Private/ValiMarkdown",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				PRODUCT_BUNDLE_IDENTIFIER = org.vali.markdown.editor.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ValiMarkdownExample.app/ValiMarkdownExample";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -456,6 +649,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E56864C15AB4FE899FD3109 /* Build configuration list for PBXNativeTarget "ValiMarkdownExampleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3C929D89A934136E7E92CBE /* Release */,
+				90656FBEB986FD2B5A374096 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

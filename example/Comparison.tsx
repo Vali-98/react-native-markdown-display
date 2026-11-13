@@ -22,7 +22,7 @@ const Custom = memo(function Custom({ frame, onUpdate, onPerformance, animate }:
   frame: SampleFrame; animate: MarkdownAnimation; onUpdate: (snapshot: MarkdownSnapshot, measurement: UpdateMeasurement) => void; onPerformance: (event: MarkdownPerformanceEvent) => void
 }) {
   const styles = useMarkdownStyles()
-  return <Markdown streaming={frame.streaming} animate={animate} style={styles} renderRules={markdownRules} onUpdate={onUpdate} onPerformance={onPerformance}>{frame.source}</Markdown>
+  return <Markdown typographer streaming={frame.streaming} animate={animate} style={styles} renderRules={markdownRules} onUpdate={onUpdate} onPerformance={onPerformance}>{frame.source}</Markdown>
 })
 function Meters({ original, native, mode }: { original: BenchmarkStats; native: BenchmarkStats; mode: Mode }) {
   const [summary, setSummary] = useState<{ label: string; text: string }[]>([])
@@ -31,7 +31,13 @@ function Meters({ original, native, mode }: { original: BenchmarkStats; native: 
   useEffect(() => {
     const update = () => {
       const engines = mode === 'both' ? [['Original', original], ['New', native]] as const : mode === 'native' ? [['New', native]] as const : [['Original', original]] as const
-      setSummary(engines.map(([label, stats]) => ({ label, text: `${stats.operations} operations · ${stats.commits} commits\n${(stats.stages[label === 'New' ? 'native work (measured)' : 'markdown-it + plugins']?.total ?? 0).toFixed(1)} ms ${label === 'New' ? 'native work' : 'parser'} · ${(stats.stages['React Profiler (inclusive)']?.total ?? 0).toFixed(1)} ms React` })))
+      setSummary(engines.map(([label, stats]) => {
+        const total = (stage: string) => (stats.stages[stage]?.total ?? 0).toFixed(1)
+        const pipeline = label === 'New'
+          ? `${total('native work (measured)')} ms native pipeline\n${total('native/parseMs')} ms parse + highlighting`
+          : `${total('markdown-it + plugins')} ms parser\n${total('pipeline/totalMs')} ms JS pipeline`
+        return { label, text: `${stats.operations} operations · ${stats.commits} commits\n${pipeline}\n${total('React Profiler (inclusive)')} ms React` }
+      }))
       if (expanded) setDetails(engines.map(([label, stats]) => `${label.toUpperCase()}\n${describe(stats)}`).join('\n\n'))
     }
     update(); const timer = setInterval(update, 250)
@@ -55,6 +61,7 @@ function Run({ sample, delay, mode, detailed, options, animate }: { sample: stri
   const nativeRevision = useRef(-1)
   const finalOriginal = useRef(-1), finalNative = useRef(-1)
   const [runKey, setRunKey] = useState(0)
+  const [autoScroll, setAutoScroll] = useState(true)
   useEffect(() => {
     if (mode !== 'native') ++original.inputs
     if (mode !== 'original') ++native.inputs
@@ -110,12 +117,12 @@ function Run({ sample, delay, mode, detailed, options, animate }: { sample: stri
     <View style={ui.header}><Text style={ui.title}>Renderer comparison</Text><Text style={ui.caption}>{mode === 'both' ? 'Side by side · shared JS workload' : mode === 'native' ? 'New renderer · isolated' : 'Original renderer · isolated'}</Text></View>
     <Meters original={original} native={native} mode={mode} />
     <View style={ui.panes}>
-      {mode !== 'native' && <PreviewPane title="Original" streaming={frame.streaming} followKey={frame.run}>
+      {mode !== 'native' && <PreviewPane title="Original" streaming={frame.streaming} followKey={frame.run} autoScroll={autoScroll}>
         <Profiler id="original" onRender={(_, __, duration) => committed('original', duration, frame)}>
           <Original key={runKey} source={frame.source} stats={original} detailed={detailed} />
         </Profiler>
       </PreviewPane>}
-      {mode !== 'original' && <PreviewPane title="New custom" streaming={frame.streaming} followKey={frame.run}>
+      {mode !== 'original' && <PreviewPane title="New custom" streaming={frame.streaming} followKey={frame.run} autoScroll={autoScroll}>
         <Profiler id="native" onRender={(_, __, duration) => committed('native', duration, frame)}>
           <Custom key={runKey} frame={frame} animate={animate} onUpdate={nativeUpdate} onPerformance={nativePerformance} />
         </Profiler>
@@ -127,12 +134,14 @@ function Run({ sample, delay, mode, detailed, options, animate }: { sample: stri
         <Action title={frame.streaming ? 'Restart stream' : 'Stream'} primary onPress={() => start(true)} />
         <Action title="Clear totals" disabled={frame.streaming} onPress={() => { Object.assign(original, createStats()); Object.assign(native, createStats()) }} />
       </View>
+      <View style={ui.row}><Action title={`Auto-scroll ${autoScroll ? 'on' : 'off'}`} selected={autoScroll} onPress={() => setAutoScroll(value => !value)} />
+        <Text style={ui.caption}>Drag either pane to pause following.</Text></View>
       <StreamDelayControl delay={delay} />
       <Disclosure title="Benchmark options">
         <ScrollView style={{ maxHeight: 180 }} nestedScrollEnabled>
         {options}
         <View style={[ui.row, { marginTop: 8 }]}><Action title="Log summary" onPress={() => console.log('Markdown benchmark', { mode, detailed, original: compactStats(original), native: compactStats(native) })} /></View>
-        <Text style={[ui.caption, { marginTop: 6 }]}>Use isolated modes for latency. Detailed probes add overhead. Headline native work excludes queueing and delivery/waiting; it includes repair, parse/tree/ranges, reconciliation and preparation. Original parser covers markdown-it/plugins only. Full latency remains in diagnostics. Stage figures overlap; do not add them to React totals. Includes superseded native operations. Development timings exclude screen paint.</Text>
+        <Text style={[ui.caption, { marginTop: 6 }]}>Use isolated modes for latency. Detailed probes add overhead. Headline native work excludes queueing and delivery/waiting; it includes repair, parse/tree/ranges, reconciliation and preparation. Original parser covers markdown-it/plugins only. Compiled code highlighting is included in new native work; disable it at build time for equivalent-feature parser comparisons. Full latency remains in diagnostics. Stage figures overlap; do not add them to React totals. Includes superseded native operations. Development timings exclude screen paint.</Text>
         </ScrollView>
       </Disclosure>
     </BottomControls>

@@ -23,6 +23,10 @@ target 'ValiMarkdownExample' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  target 'ValiMarkdownExampleTests' do
+    inherit! :search_paths
+  end
+
   post_install do |installer|
     react_native_post_install(
       installer,
@@ -30,5 +34,14 @@ target 'ValiMarkdownExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+    # Xcode 27 rejects older resource-bundle targets (including RaTeX fonts).
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build|
+        deployment = build.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+        if deployment && Gem::Version.new(deployment) < Gem::Version.new(min_ios_version_supported)
+          build.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = min_ios_version_supported
+        end
+      end
+    end
   end
 end

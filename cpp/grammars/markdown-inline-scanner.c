@@ -1,0 +1,2 @@
+// Unique native translation unit; upstream source is unchanged.
+#include "../../vendor/tree-sitter/markdown/tree-sitter-markdown-inline/src/scanner.c"

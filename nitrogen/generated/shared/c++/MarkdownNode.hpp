@@ -31,6 +31,7 @@
 
 
 #include <string>
+#include <optional>
 
 namespace margelo::nitro::markdown {
 
@@ -44,13 +45,14 @@ namespace margelo::nitro::markdown {
     std::string type     SWIFT_PRIVATE;
     std::string content     SWIFT_PRIVATE;
     std::string destination     SWIFT_PRIVATE;
+    std::optional<std::string> language     SWIFT_PRIVATE;
     std::string marker     SWIFT_PRIVATE;
     double sourceStart     SWIFT_PRIVATE;
     double sourceEnd     SWIFT_PRIVATE;
 
   public:
     MarkdownNode() = default;
-    explicit MarkdownNode(std::string id, std::string parentId, std::string type, std::string content, std::string destination, std::string marker, double sourceStart, double sourceEnd): id(id), parentId(parentId), type(type), content(content), destination(destination), marker(marker), sourceStart(sourceStart), sourceEnd(sourceEnd) {}
+    explicit MarkdownNode(std::string id, std::string parentId, std::string type, std::string content, std::string destination, std::optional<std::string> language, std::string marker, double sourceStart, double sourceEnd): id(id), parentId(parentId), type(type), content(content), destination(destination), language(language), marker(marker), sourceStart(sourceStart), sourceEnd(sourceEnd) {}
 
   public:
     friend bool operator==(const MarkdownNode& lhs, const MarkdownNode& rhs) = default;
@@ -71,6 +73,7 @@ namespace margelo::nitro {
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "type"))),
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "content"))),
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "destination"))),
+        JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "language"))),
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "marker"))),
         JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "sourceStart"))),
         JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "sourceEnd")))
@@ -83,6 +86,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "type"), JSIConverter<std::string>::toJSI(runtime, arg.type));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "content"), JSIConverter<std::string>::toJSI(runtime, arg.content));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "destination"), JSIConverter<std::string>::toJSI(runtime, arg.destination));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "language"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.language));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "marker"), JSIConverter<std::string>::toJSI(runtime, arg.marker));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "sourceStart"), JSIConverter<double>::toJSI(runtime, arg.sourceStart));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "sourceEnd"), JSIConverter<double>::toJSI(runtime, arg.sourceEnd));
@@ -101,6 +105,7 @@ namespace margelo::nitro {
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "type")))) return false;
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "content")))) return false;
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "destination")))) return false;
+      if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "language")))) return false;
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "marker")))) return false;
       if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "sourceStart")))) return false;
       if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "sourceEnd")))) return false;

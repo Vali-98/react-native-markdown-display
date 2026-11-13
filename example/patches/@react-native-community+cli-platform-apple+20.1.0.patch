@@ -1,0 +1,26 @@
+diff --git a/node_modules/@react-native-community/cli-platform-apple/build/commands/runCommand/runOnSimulator.js b/node_modules/@react-native-community/cli-platform-apple/build/commands/runCommand/runOnSimulator.js
+--- a/node_modules/@react-native-community/cli-platform-apple/build/commands/runCommand/runOnSimulator.js
++++ b/node_modules/@react-native-community/cli-platform-apple/build/commands/runCommand/runOnSimulator.js
+@@ -42,7 +42,21 @@
+   const activeDeveloperDir = _child_process().default.execFileSync('xcode-select', ['-p'], {
+     encoding: 'utf8'
+   }).trim();
+-  _child_process().default.execFileSync('open', [`${activeDeveloperDir}/Applications/Simulator.app`, '--args', '-CurrentDeviceUDID', simulator.udid]);
++  // Xcode 27 replaces Simulator.app with Device Hub in Contents/Applications.
++  const fs = require('fs');
++  const path = require('path');
++  const simulatorApp = [
++    path.join(activeDeveloperDir, 'Applications/Simulator.app'),
++    path.resolve(activeDeveloperDir, '../Applications/Simulator.app'),
++  ].find(candidate => fs.existsSync(candidate));
++  const deviceHub = path.resolve(activeDeveloperDir, '../Applications/DeviceHub.app');
++  if (simulatorApp) {
++    _child_process().default.execFileSync('open', [simulatorApp, '--args', '-CurrentDeviceUDID', simulator.udid]);
++  } else if (fs.existsSync(deviceHub)) {
++    _child_process().default.execFileSync('open', [deviceHub]);
++  } else {
++    throw new Error('Cannot find Simulator.app or DeviceHub.app in the selected Xcode installation.');
++  }
+   if (simulator.state !== 'Booted') {
+     bootSimulator(simulator);
+   }

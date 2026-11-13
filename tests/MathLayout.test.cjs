@@ -17,6 +17,7 @@ new Function('exports', 'require', output)(exportsObject, name => {
   if (name === 'react') return React
   if (name === 'react-native') return native
   if (name === './AnimationSettings') return { resolveAnimation: () => null }
+  if (name === './SyntaxHighlighting') return {syntaxStyles: {}}
   if (name === './RevealPlan') return { planReveal: () => ({ batches: [] }) }
   return {}
 })

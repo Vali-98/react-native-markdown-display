@@ -74,4 +74,4 @@ export interface MarkdownInputViewMethods extends HybridViewMethods {
   setSelection(start: number, end: number): void
   activate(offset: number): void
 }
-export type MarkdownInputView = HybridView<MarkdownInputViewProps, MarkdownInputViewMethods, { android: 'kotlin' }>
+export type MarkdownInputView = HybridView<MarkdownInputViewProps, MarkdownInputViewMethods, { android: 'kotlin'; ios: 'swift' }>

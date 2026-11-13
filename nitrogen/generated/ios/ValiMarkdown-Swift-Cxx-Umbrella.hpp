@@ -8,10 +8,60 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-
+// Forward declaration of `EditorBlock` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorBlock; }
+// Forward declaration of `EditorChange` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorChange; }
+// Forward declaration of `EditorConfiguration` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorConfiguration; }
+// Forward declaration of `EditorEvent` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorEvent; }
+// Forward declaration of `EditorFocus` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorFocus; }
+// Forward declaration of `EditorInlineStyle` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorInlineStyle; }
+// Forward declaration of `EditorLayout` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorLayout; }
+// Forward declaration of `EditorMetrics` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorMetrics; }
+// Forward declaration of `EditorPreviewSize` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorPreviewSize; }
+// Forward declaration of `EditorPreviewSizes` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorPreviewSizes; }
+// Forward declaration of `EditorSelection` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorSelection; }
+// Forward declaration of `EditorState` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorState; }
+// Forward declaration of `EditorTextAttributes` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorTextAttributes; }
+// Forward declaration of `EditorTouch` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorTouch; }
+// Forward declaration of `HybridMarkdownInputViewSpec` to properly resolve imports.
+namespace margelo::nitro::markdown { class HybridMarkdownInputViewSpec; }
 
 // Include C++ defined types
-
+#include "EditorBlock.hpp"
+#include "EditorChange.hpp"
+#include "EditorConfiguration.hpp"
+#include "EditorEvent.hpp"
+#include "EditorFocus.hpp"
+#include "EditorInlineStyle.hpp"
+#include "EditorLayout.hpp"
+#include "EditorMetrics.hpp"
+#include "EditorPreviewSize.hpp"
+#include "EditorPreviewSizes.hpp"
+#include "EditorSelection.hpp"
+#include "EditorState.hpp"
+#include "EditorTextAttributes.hpp"
+#include "EditorTouch.hpp"
+#include "HybridMarkdownInputViewSpec.hpp"
+#include <NitroModules/Result.hpp>
+#include <exception>
+#include <functional>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 // C++ helpers for Swift
 #include "ValiMarkdown-Swift-Cxx-Bridge.hpp"
@@ -23,7 +73,8 @@
 #include <NitroModules/DateToChronoDate.hpp>
 
 // Forward declarations of Swift defined types
-
+// Forward declaration of `HybridMarkdownInputViewSpec_cxx` to properly resolve imports.
+namespace ValiMarkdown { class HybridMarkdownInputViewSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("ValiMarkdown-Swift.h")

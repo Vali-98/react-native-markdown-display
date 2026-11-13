@@ -2,6 +2,7 @@ import React, { Profiler, useRef, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import Markdown, { type MarkdownSnapshot, type UpdateMeasurement, type MarkdownAnimation } from '@vali98/react-native-markdown-display'
+import { CodeHighlightDemo } from './CodeHighlightDemo'
 import { EditorDemo } from './EditorDemo'
 import { Comparison } from './Comparison'
 import { AnimationControls } from './AnimationControls'
@@ -63,15 +64,16 @@ function Demo({ delay }: { delay: React.RefObject<number> }) {
 }
 export default function App() {
   const streamDelay = useRef(100)
-  const [tab, setTab] = useState<'native' | 'legacy' | 'editor'>('native')
+  const [tab, setTab] = useState<'native' | 'legacy' | 'editor' | 'code'>('native')
   return <SafeAreaProvider><KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'height' : 'padding'} style={ui.screen}>
     <SafeAreaView edges={['top', 'left', 'right']} style={ui.topbar}>
       <View style={ui.tabs}>
         <Action title="Preview" selected={tab === 'native'} onPress={() => setTab('native')} />
-        {Platform.OS === 'android' && <Action title="Editor" selected={tab === 'editor'} onPress={() => setTab('editor')} />}
+        {(Platform.OS === 'android' || Platform.OS === 'ios') && <Action title="Editor" selected={tab === 'editor'} onPress={() => setTab('editor')} />}
+        <Action title="Code" selected={tab === 'code'} onPress={() => setTab('code')} />
         <Action title="Compare" selected={tab === 'legacy'} onPress={() => setTab('legacy')} />
       </View>
     </SafeAreaView>
-    {tab === 'editor' ? <EditorDemo /> : tab === 'native' ? <Demo delay={streamDelay} /> : <Comparison sample={markdownTestText} delay={streamDelay} />}
+    {tab === 'code' ? <CodeHighlightDemo /> : tab === 'editor' ? <EditorDemo /> : tab === 'native' ? <Demo delay={streamDelay} /> : <Comparison sample={markdownTestText} delay={streamDelay} />}
   </KeyboardAvoidingView></SafeAreaProvider>
 }

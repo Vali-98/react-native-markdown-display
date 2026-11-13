@@ -1,0 +1,92 @@
+{
+  "runtime": {
+    "repository": "https://github.com/tree-sitter/tree-sitter",
+    "version": "v0.27.2",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter/tar.gz/refs/tags/v0.27.2",
+    "sha256": "356528363bf7fbad12a2cfeb5a2678c0118ef886a4d69ad9a379db5fdef0735f"
+  },
+  "javascript": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-javascript",
+    "version": "v0.25.0",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-javascript/tar.gz/refs/tags/v0.25.0",
+    "sha256": "9712fc283d3dc01d996d20b6392143445d05867a7aad76fdd723824468428b86"
+  },
+  "typescript": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-typescript",
+    "version": "v0.23.2",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-typescript/tar.gz/refs/tags/v0.23.2",
+    "sha256": "2c4ce711ae8d1218a3b2f899189298159d672870b5b34dff5d937bed2f3e8983"
+  },
+  "python": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-python",
+    "version": "v0.25.0",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-python/tar.gz/refs/tags/v0.25.0",
+    "sha256": "4609a3665a620e117acf795ff01b9e965880f81745f287a16336f4ca86cf270c"
+  },
+  "json": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-json",
+    "version": "v0.24.8",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-json/tar.gz/refs/tags/v0.24.8",
+    "sha256": "acf6e8362457e819ed8b613f2ad9a0e1b621a77556c296f3abea58f7880a9213"
+  },
+  "html": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-html",
+    "version": "v0.23.2",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-html/tar.gz/refs/tags/v0.23.2",
+    "sha256": "21fa4f2d4dcb890ef12d09f4979a0007814f67f1c7294a9b17b0108a09e45ef7"
+  },
+  "css": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-css",
+    "version": "v0.25.0",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-css/tar.gz/refs/tags/v0.25.0",
+    "sha256": "03965344d8c0435dc54fb45b281578420bb7db8b99df4d34e7e74105a274cb79"
+  },
+  "go": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-go",
+    "version": "v0.25.0",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-go/tar.gz/refs/tags/v0.25.0",
+    "sha256": "2dc241b97872c53195e01b86542b411a3c1a6201d9c946c78d5c60c063bba1ef"
+  },
+  "java": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-java",
+    "version": "v0.23.5",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-java/tar.gz/refs/tags/v0.23.5",
+    "sha256": "cb199e0faae4b2c08425f88cbb51c1a9319612e7b96315a174a624db9bf3d9f0"
+  },
+  "c": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-c",
+    "version": "v0.24.2",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-c/tar.gz/refs/tags/v0.24.2",
+    "sha256": "2eeb4db31f8fa0865e45488503d13403923bcb485a1bdb637abff8c42dd97364"
+  },
+  "rust": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-rust",
+    "version": "v0.24.2",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-rust/tar.gz/refs/tags/v0.24.2",
+    "sha256": "061e90a539a55a6aa65dceb0ad6425c50ab1a6e3e6d4ba430e2795ed4550f10e"
+  },
+  "bash": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-bash",
+    "version": "v0.25.1",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-bash/tar.gz/refs/tags/v0.25.1",
+    "sha256": "2e785a761225b6c433410ef9c7b63cfb0a4e83a35a19e0f2aec140b42c06b52d"
+  },
+  "cpp": {
+    "repository": "https://github.com/tree-sitter/tree-sitter-cpp",
+    "version": "v0.23.4",
+    "archive": "https://codeload.github.com/tree-sitter/tree-sitter-cpp/tar.gz/refs/tags/v0.23.4",
+    "sha256": "7a2c55afe3028f4105f25762ea58cc16537d1f5a1dcd9cca90410b3cd5d46051"
+  },
+  "markdown": {
+    "repository": "https://github.com/tree-sitter-grammars/tree-sitter-markdown",
+    "version": "v0.5.4",
+    "archive": "https://codeload.github.com/tree-sitter-grammars/tree-sitter-markdown/tar.gz/refs/tags/v0.5.4",
+    "sha256": "481ce2c1cce7b1130bc8455c186052bd0fa461f1ff488666994c6a3da7fca2ac"
+  },
+  "yaml": {
+    "repository": "https://github.com/tree-sitter-grammars/tree-sitter-yaml",
+    "version": "v0.7.2",
+    "archive": "https://codeload.github.com/tree-sitter-grammars/tree-sitter-yaml/tar.gz/refs/tags/v0.7.2",
+    "sha256": "aeaff5731bb8b66c7054c8aed33cd5edea5f4cd2ac71654f3f6c2ba2073d8fac"
+  }
+}

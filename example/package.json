@@ -8,11 +8,11 @@
     "lint": "eslint .",
     "start": "react-native start --reset-cache",
     "test": "jest",
-    "pod": "bundle install && bundle exec pod install --project-directory=ios",
+    "pod": "pod install --project-directory=ios",
     "typecheck": "tsc --noEmit",
     "prestart": "npm --prefix .. run patch:legacy",
     "preandroid": "npm --prefix .. run patch:legacy",
-    "preios": "npm --prefix .. run patch:legacy"
+    "preios": "npm --prefix .. run patch:legacy && npm run pod"
   },
   "dependencies": {
     "@react-native-community/slider": "^5.2.2",
@@ -43,5 +43,25 @@
   },
   "engines": {
     "node": ">= 22.11.0"
+  },
+  "vali-markdown": {
+    "enableCodeHighlight": true,
+    "codeHighlightLanguages": [
+      "json",
+      "html",
+      "css",
+      "markdown",
+      "yaml",
+      "go",
+      "java",
+      "javascript",
+      "python",
+      "c",
+      "rust",
+      "bash",
+      "typescript",
+      "tsx",
+      "cpp"
+    ]
   }
 }

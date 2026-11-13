@@ -7,6 +7,8 @@ export interface MarkdownNode {
   type: string
   content: string
   destination: string
+  /** Fence language tag, when supplied. */
+  language?: string
   /** Rendered list marker, including ordered start and task state. */
   marker: string
   /** UTF-16 source offsets for source-backed text; -1 for synthetic/unmapped text. */
@@ -15,7 +17,7 @@ export interface MarkdownNode {
 }
 export interface NativeTimings {
   repairMs: number
-  /** MD4C including document-building callbacks, not isolated parser CPU time. */
+  /** MD4C, tree construction and configured code highlighting. */
   parseMs: number
   reconcileMs: number
   queueMs: number

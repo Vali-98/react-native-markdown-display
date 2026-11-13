@@ -12,5 +12,15 @@ import NitroModules
 public final class ValiMarkdownAutolinking {
   public typealias bridge = margelo.nitro.markdown.bridge.swift
 
+  public static func createMarkdownInputView() -> bridge.std__shared_ptr_HybridMarkdownInputViewSpec_ {
+    let hybridObject = HybridMarkdownInputView()
+    return { () -> bridge.std__shared_ptr_HybridMarkdownInputViewSpec_ in
+      let __cxxWrapped = hybridObject.getCxxWrapper()
+      return __cxxWrapped.getCxxPart()
+    }()
+  }
   
+  public static func isMarkdownInputViewRecyclable() -> Bool {
+    return HybridMarkdownInputView.self is any RecyclableView.Type
+  }
 }

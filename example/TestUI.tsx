@@ -22,33 +22,37 @@ export function BottomControls({ children }: { children: ReactNode }) {
   // the previews, and the Android navigation bar / iOS home indicator stay clear.
   return <SafeAreaView edges={['bottom', 'left', 'right']} style={ui.footer}><View style={ui.footerContent}>{children}</View></SafeAreaView>
 }
-export function PreviewPane({ title, streaming, followKey, children }: { title: string; streaming: boolean; followKey: number; children: ReactNode }) {
+export function PreviewPane({ title, streaming, followKey, autoScroll = true, children }: { title: string; streaming: boolean; followKey: number; autoScroll?: boolean; children: ReactNode }) {
   const scroll = useRef<ScrollView>(null)
   const wasStreaming = useRef(false)
   const follow = useRef(false)
+  const enabled = useRef(autoScroll); enabled.current = autoScroll
   const scheduled = useRef<number | undefined>(undefined)
   useEffect(() => {
-    if (wasStreaming.current && !streaming) scroll.current?.scrollToEnd({ animated: false })
-    if (streaming) follow.current = true
+    if (wasStreaming.current && !streaming && autoScroll && follow.current) scroll.current?.scrollToEnd({ animated: false })
     wasStreaming.current = streaming
-  }, [streaming])
+  }, [streaming, autoScroll])
   useEffect(() => {
-    if (!streaming) { follow.current = false; scroll.current?.scrollTo({ y: 0, animated: false }) }
-    else { follow.current = true; scroll.current?.scrollToEnd({ animated: false }) }
-    return () => { if (scheduled.current !== undefined) cancelAnimationFrame(scheduled.current) }
-  }, [followKey])
+    follow.current = autoScroll && streaming
+    if (!autoScroll) return
+    if (streaming) scroll.current?.scrollToEnd({ animated: false })
+    else scroll.current?.scrollTo({ y: 0, animated: false })
+  }, [followKey, autoScroll])
+  useEffect(() => () => { if (scheduled.current !== undefined) cancelAnimationFrame(scheduled.current) }, [])
   const changed = () => {
-    // Keep following through the final native update / late math measurement.
-    if (!follow.current || scheduled.current !== undefined) return
+    if (!enabled.current || !follow.current || scheduled.current !== undefined) return
     scheduled.current = requestAnimationFrame(() => {
       scheduled.current = undefined
-      scroll.current?.scrollToEnd({ animated: false })
+      // Recheck after a drag/toggle: a queued callback must not fight the user.
+      if (enabled.current && follow.current) scroll.current?.scrollToEnd({ animated: false })
     })
   }
   return <View style={ui.pane}>
     <View style={ui.paneHeader}><Text style={ui.paneTitle}>{title}</Text>{streaming && <Text style={ui.live}>LIVE</Text>}</View>
-    <ScrollView ref={scroll} style={{ flex: 1 }} contentContainerStyle={ui.previewContent} onContentSizeChange={changed} onLayout={changed}>
-      {children}
+    <ScrollView ref={scroll} style={ui.previewScroll} contentContainerStyle={ui.previewContent}
+      nestedScrollEnabled directionalLockEnabled canCancelContentTouches keyboardShouldPersistTaps="handled"
+      onScrollBeginDrag={() => { follow.current = false }} onContentSizeChange={changed} onLayout={changed}>
+      <View collapsable={false} style={{ flexShrink: 0 }}>{children}</View>
     </ScrollView>
   </View>
 }
@@ -67,9 +71,10 @@ export const ui = StyleSheet.create({
   footer: { backgroundColor: '#fff', borderTopWidth: StyleSheet.hairlineWidth, borderColor: '#dfdce8' },
   footerContent: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 6, gap: 6 },
   panes: { flex: 1, flexDirection: 'row', gap: 8, paddingHorizontal: 10, paddingBottom: 10, minHeight: 0 },
-  pane: { flex: 1, minWidth: 0, borderRadius: 12, backgroundColor: '#fff', overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: '#dfdce8' },
+  pane: { flex: 1, minHeight: 0, minWidth: 0, borderRadius: 12, backgroundColor: '#fff', overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: '#dfdce8' },
   paneHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#eeecf4' },
   paneTitle: { fontSize: 13, fontWeight: '700', color: '#514466' }, live: { color: '#6953b2', fontSize: 9, fontWeight: '700' },
+  previewScroll: { flex: 1, minHeight: 0 },
   previewContent: { padding: 10, paddingBottom: 22 },
   metrics: { paddingHorizontal: 14, paddingBottom: 8 },
   metricLabel: { color: '#777185', fontSize: 11 },

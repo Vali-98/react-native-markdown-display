@@ -42,10 +42,10 @@ export interface MarkdownInputProps extends CompatibleInputProps {
   /** Display-only substitutions; the controlled value stays unchanged. */
   typographer?: boolean
 }
-/** Android Markdown editing with a compatible subset of TextInput props. */
+/** Native Markdown editing with a compatible subset of TextInput props. */
 export const MarkdownInput = forwardRef<MarkdownInputRef, MarkdownInputProps>(function MarkdownInput(props, forwardedRef) {
   const NativeInput = NativeMarkdownInputView
-  if (!NativeInput) throw new Error('MarkdownInput currently supports Android only.')
+  if (!NativeInput) throw new Error('MarkdownInput requires iOS or Android.')
   const { style, markdownStyle, renderRules, placeholder = '', delimiterColor, previews = true, typographer = false } = props
   const native = useRef<MarkdownInputView | null>(null)
   const wrapper = useRef<View>(null)

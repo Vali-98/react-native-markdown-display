@@ -17,7 +17,7 @@ export function EditorDemo() {
   const styles = useMarkdownStyles()
   if (composer) return <ComposerDemo onBack={() => setComposer(false)} />
   return <View style={ui.screen}>
-    <View style={ui.header}><Text style={ui.title}>Markdown editor · Android</Text>
+    <View style={ui.header}><Text style={ui.title}>Markdown editor</Text>
       <Text style={ui.caption}>{variant === 'custom' ? 'Custom styles and render rules · native RaTeX math previews.' : 'Basic styles · no render rules · math shown as TeX source.'}</Text></View>
     <MarkdownInput multiline ref={input} style={{ flex: 1, minHeight: 0, backgroundColor: '#fff' }}
       value={value} onChangeText={setValue} previews={previews} typographer={typographer} markdownStyle={variant === 'custom' ? styles : undefined} renderRules={variant === 'custom' ? markdownRules : undefined} placeholder="Write Markdown…" />

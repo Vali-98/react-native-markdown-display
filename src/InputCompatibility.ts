@@ -1,5 +1,6 @@
 import { I18nManager, processColor, StyleSheet, type ColorValue, type NativeSyntheticEvent, type StyleProp, type TextInputProps, type TextStyle } from 'react-native'
 import type { EditorConfiguration, EditorInlineStyle, EditorTextAttributes } from './specs/MarkdownInputView.nitro'
+import { syntaxStyles, syntaxKinds } from './SyntaxHighlighting'
 import type { MarkdownStyles } from './Markdown'
 
 /** Only implemented TextInput props are advertised; unsupported props are not silently accepted. */
@@ -31,7 +32,7 @@ export function inputConfiguration(props: CompatibleInputProps): EditorConfigura
 }
 export function nativeColor(value: ColorValue | undefined, fallback: string): number {
   const color = processColor(value ?? fallback)
-  if (typeof color !== 'number') throw new Error('MarkdownInput requires a resolved color string or number on Android.')
+  if (typeof color !== 'number') throw new Error('MarkdownInput requires a resolved color string or number on iOS and Android.')
   return color
 }
 const textKeys = new Set(['color', 'fontSize', 'fontFamily', 'fontWeight', 'fontStyle', 'letterSpacing', 'lineHeight', 'textAlign', 'textAlignVertical', 'includeFontPadding', 'writingDirection', 'textDecorationLine', 'textDecorationColor', 'textDecorationStyle', 'fontVariant', 'textShadowColor', 'textShadowOffset', 'textShadowRadius'])
@@ -73,9 +74,9 @@ export function inputEvent<T extends object>(payload: T, target: number): Native
 /** Markdown styles stay separate from TextInput's editable-source text style. */
 export function inputInlineStyles(styles: MarkdownStyles | undefined): EditorInlineStyle[] {
   const kinds: Record<string, number> = { strong: 1, em: 2, s: 3, code_inline: 4, double_quote: 5, link: 6, blockquote: 7,
-    heading1: 11, heading2: 12, heading3: 13, heading4: 14, heading5: 15, heading6: 16 }
+    heading1: 11, heading2: 12, heading3: 13, heading4: 14, heading5: 15, heading6: 16, ...syntaxKinds }
   return Object.entries(kinds).flatMap(([type, kind]) => {
-    const style = styles?.[type]
+    const style = styles?.[type] ?? (syntaxStyles as MarkdownStyles)[type]
     return style ? [{ kind, hasColor: style.color != null, color: nativeColor(style.color, '#000000'),
       hasBackground: style.backgroundColor != null, backgroundColor: nativeColor(style.backgroundColor, '#00000000'),
       fontSize: style.fontSize ?? 0, fontFamily: style.fontFamily ?? '', fontWeight: String(style.fontWeight ?? ''),

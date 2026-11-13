@@ -304,14 +304,19 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
     styling=true
     try {
       editable.getSpans(0,editable.length,EditorSpan::class.java).forEach { editable.removeSpan(it) }
+      val inactiveBlocks=ranges.filter {previewsEnabled && configuration.multiline && it.kind in 21..23 && !isActive(it)}
       for(range in if(previewsEnabled)ranges else emptyList()) {
-        if(range.start<0 || range.end>editable.length || range.end<=range.start || range.kind>=20)continue
+        if(range.start<0 || range.end>editable.length || range.end<=range.start || (range.kind>=20 && range.kind !in 200..213))continue
+        // Metric spans inside a collapsed replacement can split its reserved
+        // layout into token-sized runs. Only exposed source needs native styles.
+        if(inactiveBlocks.any {range.start>=it.start && range.end<=it.end})continue
         val span: Any = when(range.kind) {
+          in 200..213 -> EditorColor(inlineStyles.firstOrNull {it.kind.toInt()==range.kind && it.hasColor}?.color?.toLong()?.toInt() ?: currentTextColor)
           0 -> EditorColor(delimiterColorValue)
           1 -> EditorStyle(Typeface.BOLD)
           2 -> EditorStyle(Typeface.ITALIC)
           3 -> EditorStrike()
-          4 -> EditorFont()
+          4,8 -> EditorFont()
           5 -> EditorColor(quoteColorValue)
           6 -> EditorColor(linkColorValue)
           7 -> EditorQuote(quoteColorValue)
@@ -324,8 +329,8 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
           editable.setSpan(InlineStyleSpan(custom),range.start,range.end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
       }
-      previews=ranges.filter { previewsEnabled && configuration.multiline && it.kind in 21..23 && !isActive(it) }.map { PreviewSpan(it) }
-      substitutions=if(previewsEnabled && typographerEnabled)ranges.filter {range -> range.kind>=100 && !isActive(range) && ranges.none {it.kind in 21..23 && range.start<it.end && range.end>it.start}}.map {TypographySpan(it)} else emptyList()
+      previews=inactiveBlocks.map { PreviewSpan(it) }
+      substitutions=if(previewsEnabled && typographerEnabled)ranges.filter {range -> range.kind in 100..111 && !isActive(range) && ranges.none {it.kind in 21..23 && range.start<it.end && range.end>it.start}}.map {TypographySpan(it)} else emptyList()
       // Metric-only span invalidation reflows the transformed text, preserving the
       // actual Editable, selection, native undo history and composing spans.
       editable.removeSpan(pulse)

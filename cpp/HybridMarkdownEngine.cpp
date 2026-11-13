@@ -42,6 +42,7 @@ std::shared_ptr<Promise<MarkdownUpdate>> HybridMarkdownEngine::enqueue(std::func
             MarkdownNode node;
             node.id=std::move(n.id);node.parentId=std::move(n.parentId);node.type=std::move(n.type);
             node.sourceStart=static_cast<double>(n.sourceStart);node.sourceEnd=static_cast<double>(n.sourceEnd);
+            if(!n.language.empty())node.language=std::move(n.language);
             node.marker=std::move(n.marker);node.content=std::move(n.content);node.destination=std::move(n.destination);
             block.nodes.push_back(std::move(node));
           }

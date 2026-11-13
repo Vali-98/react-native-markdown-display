@@ -2,12 +2,14 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "CodeHighlighter.hpp"
 namespace vali::markdown {
 struct Timings { double repairMs=0, parseMs=0, reconcileMs=0, queueMs=0, prepareMs=0; };
 struct Node {
   std::string id, parentId, type, content, destination;
   int64_t sourceStart=-1, sourceEnd=-1;
   std::string marker;
+  std::string language;
 };
 struct Snapshot {
   Timings timings;
@@ -39,6 +41,7 @@ class Document {
   Update update(Snapshot snapshot, bool reset);
  private:
   Snapshot parse(bool includeSource);
+  CodeHighlighter highlighter_;
   std::vector<Block> blocks_;
   uint64_t nextBlockId_=1;
   std::string source_;

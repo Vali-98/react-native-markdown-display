@@ -13,6 +13,7 @@ add_library(${PACKAGE_NAME} SHARED
 	src/main/cpp/cpp-adapter.cpp
         src/main/cpp/editor-analysis.cpp
         ../cpp/EditorAnalysis.cpp
+        ../cpp/CodeHighlighter.cpp
 	../cpp/HybridMarkdownEngine.cpp
         ../cpp/Document.cpp
         ../cpp/StreamingRepair.cpp
@@ -38,3 +39,6 @@ target_link_libraries(
         ${LOG_LIB}
         android                                   # <-- Android core
 )
+
+include(${CMAKE_SOURCE_DIR}/../cmake/CodeHighlight.cmake)
+vali_configure_highlighting(${PACKAGE_NAME})

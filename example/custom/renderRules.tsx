@@ -6,9 +6,9 @@ import type { RenderRules } from '@vali98/react-native-markdown-display'
 // Adapted from the reference rules. App-specific components are replaced with
 // RN primitives, with native RaTeX for math in this example only.
 export const markdownRules: RenderRules = {
-  fence: ({ children, styles }) => (
+  fence: ({ node, children, styles }) => (
     <View>
-      <View style={styles.fenceHeader}><Text style={{ color: '#d7c8eb' }}>Code</Text></View>
+      <View style={styles.fenceHeader}><Text style={{ color: '#d7c8eb' }}>{node.language || 'Code'}</Text></View>
       <Text selectable style={styles.fence}>{children}</Text>
     </View>
   ),
