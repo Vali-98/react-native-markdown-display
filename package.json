@@ -1,6 +1,6 @@
 {
   "name": "@vali98/react-native-markdown-display",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Extensible React Native Markdown rendering with a C++ MD4C engine",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
