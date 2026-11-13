@@ -37,6 +37,30 @@ abstract class HybridMarkdownInputViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
+  abstract var selectionState: EditorSelection
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var inlineStyles: Array<EditorInlineStyle>
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var configuration: EditorConfiguration
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var textAttributes: EditorTextAttributes
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
   abstract var previewSizes: EditorPreviewSizes
   
   @get:DoNotStrip
@@ -49,25 +73,37 @@ abstract class HybridMarkdownInputViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var textColor: String
+  abstract var textColor: Double
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var delimiterColor: String
+  abstract var placeholderColor: Double
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var selectionColor: Double
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var cursorColor: Double
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var delimiterColor: Double
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
   abstract var fontSize: Double
-  
-  @get:DoNotStrip
-  @get:Keep
-  @set:DoNotStrip
-  @set:Keep
-  abstract var editable: Boolean
   
   @get:DoNotStrip
   @get:Keep
@@ -85,13 +121,13 @@ abstract class HybridMarkdownInputViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var quoteColor: String
+  abstract var quoteColor: Double
   
   @get:DoNotStrip
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var linkColor: String
+  abstract var linkColor: Double
   
   abstract var onChange: ((event: EditorChange) -> Unit)?
   
@@ -134,6 +170,62 @@ abstract class HybridMarkdownInputViewSpec: HybridView() {
     set(value) {
       onBlocks = value?.let { it }
     }
+  
+  abstract var onFocusChanged: ((event: EditorFocus) -> Unit)?
+  
+  private var onFocusChanged_cxx: Func_void_EditorFocus?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onFocusChanged?.let { Func_void_EditorFocus_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onFocusChanged = value?.let { it }
+    }
+  
+  abstract var onSubmit: ((event: EditorEvent) -> Unit)?
+  
+  private var onSubmit_cxx: Func_void_EditorEvent?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onSubmit?.let { Func_void_EditorEvent_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onSubmit = value?.let { it }
+    }
+  
+  abstract var onTouch: ((event: EditorTouch) -> Unit)?
+  
+  private var onTouch_cxx: Func_void_EditorTouch?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onTouch?.let { Func_void_EditorTouch_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onTouch = value?.let { it }
+    }
+  
+  abstract var onMetrics: ((event: EditorMetrics) -> Unit)?
+  
+  private var onMetrics_cxx: Func_void_EditorMetrics?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onMetrics?.let { Func_void_EditorMetrics_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onMetrics = value?.let { it }
+    }
 
   // Methods
   @DoNotStrip
@@ -143,6 +235,18 @@ abstract class HybridMarkdownInputViewSpec: HybridView() {
   @DoNotStrip
   @Keep
   abstract fun blur(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun isFocused(): Boolean
+  
+  @DoNotStrip
+  @Keep
+  abstract fun clear(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setSelection(start: Double, end: Double): Unit
   
   @DoNotStrip
   @Keep

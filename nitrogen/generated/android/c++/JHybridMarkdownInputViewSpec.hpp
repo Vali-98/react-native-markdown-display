@@ -52,37 +52,60 @@ namespace margelo::nitro::markdown {
     // Properties
     EditorState getState() override;
     void setState(const EditorState& state) override;
+    EditorSelection getSelectionState() override;
+    void setSelectionState(const EditorSelection& selectionState) override;
+    std::vector<EditorInlineStyle> getInlineStyles() override;
+    void setInlineStyles(const std::vector<EditorInlineStyle>& inlineStyles) override;
+    EditorConfiguration getConfiguration() override;
+    void setConfiguration(const EditorConfiguration& configuration) override;
+    EditorTextAttributes getTextAttributes() override;
+    void setTextAttributes(const EditorTextAttributes& textAttributes) override;
     EditorPreviewSizes getPreviewSizes() override;
     void setPreviewSizes(const EditorPreviewSizes& previewSizes) override;
     std::string getPlaceholder() override;
     void setPlaceholder(const std::string& placeholder) override;
-    std::string getTextColor() override;
-    void setTextColor(const std::string& textColor) override;
-    std::string getDelimiterColor() override;
-    void setDelimiterColor(const std::string& delimiterColor) override;
+    double getTextColor() override;
+    void setTextColor(double textColor) override;
+    double getPlaceholderColor() override;
+    void setPlaceholderColor(double placeholderColor) override;
+    double getSelectionColor() override;
+    void setSelectionColor(double selectionColor) override;
+    double getCursorColor() override;
+    void setCursorColor(double cursorColor) override;
+    double getDelimiterColor() override;
+    void setDelimiterColor(double delimiterColor) override;
     double getFontSize() override;
     void setFontSize(double fontSize) override;
-    bool getEditable() override;
-    void setEditable(bool editable) override;
     bool getPreviews() override;
     void setPreviews(bool previews) override;
     bool getTypographer() override;
     void setTypographer(bool typographer) override;
-    std::string getQuoteColor() override;
-    void setQuoteColor(const std::string& quoteColor) override;
-    std::string getLinkColor() override;
-    void setLinkColor(const std::string& linkColor) override;
+    double getQuoteColor() override;
+    void setQuoteColor(double quoteColor) override;
+    double getLinkColor() override;
+    void setLinkColor(double linkColor) override;
     std::optional<std::function<void(const EditorChange& /* event */)>> getOnChange() override;
     void setOnChange(const std::optional<std::function<void(const EditorChange& /* event */)>>& onChange) override;
     std::optional<std::function<void(const EditorSelection& /* selection */)>> getOnSelection() override;
     void setOnSelection(const std::optional<std::function<void(const EditorSelection& /* selection */)>>& onSelection) override;
     std::optional<std::function<void(const EditorLayout& /* event */)>> getOnBlocks() override;
     void setOnBlocks(const std::optional<std::function<void(const EditorLayout& /* event */)>>& onBlocks) override;
+    std::optional<std::function<void(const EditorFocus& /* event */)>> getOnFocusChanged() override;
+    void setOnFocusChanged(const std::optional<std::function<void(const EditorFocus& /* event */)>>& onFocusChanged) override;
+    std::optional<std::function<void(const EditorEvent& /* event */)>> getOnSubmit() override;
+    void setOnSubmit(const std::optional<std::function<void(const EditorEvent& /* event */)>>& onSubmit) override;
+    std::optional<std::function<void(const EditorTouch& /* event */)>> getOnTouch() override;
+    void setOnTouch(const std::optional<std::function<void(const EditorTouch& /* event */)>>& onTouch) override;
+    std::optional<std::function<void(const EditorMetrics& /* event */)>> getOnMetrics() override;
+    void setOnMetrics(const std::optional<std::function<void(const EditorMetrics& /* event */)>>& onMetrics) override;
 
   public:
     // Methods
     void focus() override;
     void blur() override;
+    bool isFocused() override;
+    void clear() override;
+    void setSelection(double start, double end) override;
     void activate(double offset) override;
 
   private:

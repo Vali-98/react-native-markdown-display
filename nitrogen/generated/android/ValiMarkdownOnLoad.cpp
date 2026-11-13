@@ -19,6 +19,10 @@
 #include "JFunc_void_EditorChange.hpp"
 #include "JFunc_void_EditorSelection.hpp"
 #include "JFunc_void_EditorLayout.hpp"
+#include "JFunc_void_EditorFocus.hpp"
+#include "JFunc_void_EditorEvent.hpp"
+#include "JFunc_void_EditorTouch.hpp"
+#include "JFunc_void_EditorMetrics.hpp"
 #include "views/JHybridMarkdownInputViewStateUpdater.hpp"
 #include "HybridMarkdownEngine.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
@@ -49,6 +53,10 @@ void registerAllNatives() {
   margelo::nitro::markdown::JFunc_void_EditorChange_cxx::registerNatives();
   margelo::nitro::markdown::JFunc_void_EditorSelection_cxx::registerNatives();
   margelo::nitro::markdown::JFunc_void_EditorLayout_cxx::registerNatives();
+  margelo::nitro::markdown::JFunc_void_EditorFocus_cxx::registerNatives();
+  margelo::nitro::markdown::JFunc_void_EditorEvent_cxx::registerNatives();
+  margelo::nitro::markdown::JFunc_void_EditorTouch_cxx::registerNatives();
+  margelo::nitro::markdown::JFunc_void_EditorMetrics_cxx::registerNatives();
   margelo::nitro::markdown::views::JHybridMarkdownInputViewStateUpdater::registerNatives();
 
   // Register Nitro Hybrid Objects

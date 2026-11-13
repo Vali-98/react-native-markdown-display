@@ -5,12 +5,18 @@
   "directEventTypes": {},
   "validAttributes": {
     "state": true,
+    "selectionState": true,
+    "inlineStyles": true,
+    "configuration": true,
+    "textAttributes": true,
     "previewSizes": true,
     "placeholder": true,
     "textColor": true,
+    "placeholderColor": true,
+    "selectionColor": true,
+    "cursorColor": true,
     "delimiterColor": true,
     "fontSize": true,
-    "editable": true,
     "previews": true,
     "typographer": true,
     "quoteColor": true,
@@ -18,6 +24,10 @@
     "onChange": true,
     "onSelection": true,
     "onBlocks": true,
+    "onFocusChanged": true,
+    "onSubmit": true,
+    "onTouch": true,
+    "onMetrics": true,
     "hybridRef": true
   }
 }

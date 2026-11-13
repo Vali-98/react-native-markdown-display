@@ -1,6 +1,17 @@
 package com.valimarkdown
 
 import android.content.Context
+import android.os.Build
+import android.util.TypedValue
+import android.view.KeyEvent
+import android.view.inputmethod.InputMethodManager
+import com.margelo.nitro.valimarkdown.EditorConfiguration
+import com.margelo.nitro.valimarkdown.EditorTextAttributes
+import com.margelo.nitro.valimarkdown.EditorFocus
+import com.margelo.nitro.valimarkdown.EditorEvent
+import com.margelo.nitro.valimarkdown.EditorTouch
+import com.margelo.nitro.valimarkdown.EditorMetrics
+import com.margelo.nitro.valimarkdown.EditorInlineStyle
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
@@ -54,6 +65,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   var typographerEnabled = false
   var quoteColorValue = android.graphics.Color.rgb(138,75,157)
   var linkColorValue = android.graphics.Color.rgb(38,116,217)
+  var inlineStyles: List<EditorInlineStyle> = emptyList()
   var eventCount = 0
     private set
   private var ready = false
@@ -78,6 +90,118 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   private val density get() = resources.displayMetrics.density
   private val composing get() = BaseInputConnection.getComposingSpanStart(text) >= 0
 
+  private var appliedConfiguration: EditorConfiguration? = null
+  private var appliedAttributes: EditorTextAttributes? = null
+  private var appliedFontSize = -1.0
+  var configuration = EditorDefaults.configuration
+    private set
+  var focusChanged: ((EditorFocus)->Unit)? = null
+  var submitted: ((EditorEvent)->Unit)? = null
+  var touched: ((EditorTouch)->Unit)? = null
+  var measured: ((EditorMetrics)->Unit)? = null
+  private var lastMetrics: EditorMetrics? = null
+
+  fun applyInputProperties(next: EditorConfiguration, attributes: EditorTextAttributes, fontSize: Double) {
+    val configChanged=appliedConfiguration!=next
+    val styleChanged=appliedAttributes!=attributes || appliedFontSize!=fontSize
+    if(!configChanged && !styleChanged)return
+    configuration=next
+    if(configChanged) {
+      val cursorStart=selectionStart;val cursorEnd=selectionEnd
+      val transform=transformationMethod
+      val oldTypeface=typeface
+      var flags=when(next.keyboardType) {
+        "numeric","number-pad" -> InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
+        "decimal-pad" -> InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+        "phone-pad" -> InputType.TYPE_CLASS_PHONE
+        "email-address" -> InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        "url" -> InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+        "visible-password" -> InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        else -> InputType.TYPE_CLASS_TEXT
+      }
+      if(flags and InputType.TYPE_MASK_CLASS==InputType.TYPE_CLASS_TEXT) {
+        if(next.multiline)flags=flags or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        flags=flags or when(next.autoCapitalize) {
+          "characters" -> InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+          "words" -> InputType.TYPE_TEXT_FLAG_CAP_WORDS
+          "sentences" -> InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+          else -> 0
+        }
+        flags=flags or if(next.autoCorrect)InputType.TYPE_TEXT_FLAG_AUTO_CORRECT else InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+      }
+      setSingleLine(!next.multiline)
+      inputType=flags
+      transformationMethod=transform
+      typeface=oldTypeface
+      minLines=next.numberOfLines.toInt().coerceAtLeast(1)
+      maxLines=if(next.multiline)Int.MAX_VALUE else 1
+      setHorizontallyScrolling(!next.multiline)
+      if(!next.editable)keyListener=null
+      isCursorVisible=next.editable && !next.caretHidden
+      showSoftInputOnFocus=next.editable && next.showSoftInputOnFocus
+      setSelectAllOnFocus(next.selectTextOnFocus)
+      val action=when(next.returnKeyType) {
+        "go" -> EditorInfo.IME_ACTION_GO;"next" -> EditorInfo.IME_ACTION_NEXT
+        "previous" -> EditorInfo.IME_ACTION_PREVIOUS;"search" -> EditorInfo.IME_ACTION_SEARCH
+        "send" -> EditorInfo.IME_ACTION_SEND;"done" -> EditorInfo.IME_ACTION_DONE
+        else -> if(next.submitBehavior=="newline")EditorInfo.IME_ACTION_NONE else EditorInfo.IME_ACTION_DONE
+      }
+      imeOptions=action or EditorInfo.IME_FLAG_NO_EXTRACT_UI or if(next.multiline && next.submitBehavior=="newline")EditorInfo.IME_FLAG_NO_ENTER_ACTION else 0
+      val preserved=filters.filterNot {it is InputFilter.LengthFilter}
+      filters=(preserved + if(next.maxLength>=0)listOf(InputFilter.LengthFilter(next.maxLength.toInt())) else emptyList()).toTypedArray()
+      if(cursorStart>=0 && cursorEnd>=0)setSelection(cursorStart.coerceAtMost(text.length),cursorEnd.coerceAtMost(text.length))
+      if(!next.editable && hasFocus())blurInput()
+      else if(hasFocus())(context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).restartInput(this)
+      appliedConfiguration=next
+    }
+    if(styleChanged || configChanged) {
+      val fontScale=if(attributes.allowFontScaling)min(resources.configuration.fontScale.toDouble(),if(attributes.maxFontSizeMultiplier>=1)attributes.maxFontSizeMultiplier else Double.POSITIVE_INFINITY) else 1.0
+      setTextSize(TypedValue.COMPLEX_UNIT_PX,(fontSize*density*fontScale).toFloat())
+      val family=if(attributes.fontFamily.isEmpty())Typeface.DEFAULT else Typeface.create(attributes.fontFamily,Typeface.NORMAL)
+      val weight=attributes.fontWeight.toIntOrNull() ?: if(attributes.fontWeight=="bold")700 else 400
+      typeface=if(Build.VERSION.SDK_INT>=28)Typeface.create(family,weight,attributes.fontStyle=="italic") else Typeface.create(family,(if(weight>=600)Typeface.BOLD else Typeface.NORMAL) or (if(attributes.fontStyle=="italic")Typeface.ITALIC else 0))
+      letterSpacing=(attributes.letterSpacing*density/textSize).toFloat()
+      includeFontPadding=attributes.includeFontPadding
+      setLineSpacing(if(attributes.lineHeight>0)(attributes.lineHeight*density-paint.fontSpacing).toFloat() else 0f,1f)
+      setPadding((attributes.paddingLeft*density).toInt(),(attributes.paddingTop*density).toInt(),(attributes.paddingRight*density).toInt(),(attributes.paddingBottom*density).toInt())
+      gravity=(when(attributes.textAlign){"center"->Gravity.CENTER_HORIZONTAL;"right"->Gravity.RIGHT;"left"->Gravity.LEFT;else->Gravity.START}) or when(attributes.textAlignVertical){"center"->Gravity.CENTER_VERTICAL;"bottom"->Gravity.BOTTOM;else->Gravity.TOP}
+      textAlignment=View.TEXT_ALIGNMENT_GRAVITY
+      appliedAttributes=attributes;appliedFontSize=fontSize
+      restyle()
+    }
+    emitBlocks()
+  }
+  fun focusInput() {
+    if(!configuration.editable)return
+    requestFocus()
+    if(configuration.showSoftInputOnFocus)(context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showSoftInput(this,InputMethodManager.SHOW_IMPLICIT)
+  }
+  fun blurInput() {
+    clearFocus()
+    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(windowToken,0)
+  }
+  private fun submitInput(): Boolean {
+    if(configuration.submitBehavior=="newline" || !configuration.editable)return false
+    submitted?.invoke(EditorEvent(text.toString(),eventCount.toDouble(),id.toDouble()))
+    if(configuration.submitBehavior=="blurAndSubmit")blurInput()
+    return true
+  }
+  override fun onKeyDown(keyCode: Int,event: KeyEvent): Boolean {
+    if(keyCode==KeyEvent.KEYCODE_ENTER && !event.isShiftPressed && configuration.submitBehavior!="newline") {
+      if(event.repeatCount==0)submitInput()
+      return true
+    }
+    return super.onKeyDown(keyCode,event)
+  }
+  override fun onKeyUp(keyCode: Int,event: KeyEvent): Boolean {
+    if(keyCode==KeyEvent.KEYCODE_ENTER && !event.isShiftPressed && configuration.submitBehavior!="newline")return true
+    return super.onKeyUp(keyCode,event)
+  }
+  override fun startActionMode(callback: android.view.ActionMode.Callback?): android.view.ActionMode? = if(configuration.contextMenuHidden)null else super.startActionMode(callback)
+  override fun startActionMode(callback: android.view.ActionMode.Callback?, type: Int): android.view.ActionMode? = if(configuration.contextMenuHidden)null else super.startActionMode(callback,type)
+  private fun emitTouch(phase: String,event: MotionEvent) {
+    touched?.invoke(EditorTouch(phase,(event.x/density).toDouble(),(event.y/density).toDouble(),(event.rawX/density).toDouble(),(event.rawY/density).toDouble(),event.eventTime.toDouble(),id.toDouble()))
+  }
   init {
     ready = true
     gravity = Gravity.TOP or Gravity.START
@@ -85,6 +209,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
     setSingleLine(false)
     inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
     background = null
+    setOnEditorActionListener {_,_,_ -> submitInput()}
     transformationMethod = object: TransformationMethod {
       override fun getTransformation(source: CharSequence, view: View): CharSequence = FoldedSource(source)
       override fun onFocusChanged(view: View?, source: CharSequence?, focused: Boolean, direction: Int, rect: Rect?) {}
@@ -118,7 +243,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
         // Present projected ranges immediately, then reconcile with C++ results.
         refreshPresentation()
         emitBlocks()
-        change?.invoke(EditorChange(s.toString(),eventCount.toDouble(),selectionStart.toDouble(),selectionEnd.toDouble()))
+        change?.invoke(EditorChange(text=s.toString(),eventCount=eventCount.toDouble(),target=id.toDouble(),selectionStart=selectionStart.toDouble(),selectionEnd=selectionEnd.toDouble()))
         analyze()
       }
     })
@@ -170,7 +295,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   }
   private fun isActive(range: SourceRange): Boolean {
     if(!hasFocus()) return false
-    val start=selectionStart.coerceAtLeast(0);val end=selectionEnd.coerceAtLeast(start)
+    val start=min(selectionStart,selectionEnd).coerceAtLeast(0);val end=max(selectionStart,selectionEnd).coerceAtLeast(0)
     return if(start==end) start in range.start..range.end else start<range.end && end>range.start
   }
   private fun refreshPresentation() {
@@ -195,8 +320,11 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
         }
         editable.setSpan(span,range.start,range.end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         if(range.kind==6)editable.setSpan(EditorUnderline(),range.start,range.end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        inlineStyles.firstOrNull {it.kind.toInt()==range.kind}?.let { custom ->
+          editable.setSpan(InlineStyleSpan(custom),range.start,range.end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
       }
-      previews=ranges.filter { previewsEnabled && it.kind in 21..23 && !isActive(it) }.map { PreviewSpan(it) }
+      previews=ranges.filter { previewsEnabled && configuration.multiline && it.kind in 21..23 && !isActive(it) }.map { PreviewSpan(it) }
       substitutions=if(previewsEnabled && typographerEnabled)ranges.filter {range -> range.kind>=100 && !isActive(range) && ranges.none {it.kind in 21..23 && range.start<it.end && range.end>it.start}}.map {TypographySpan(it)} else emptyList()
       // Metric-only span invalidation reflows the transformed text, preserving the
       // actual Editable, selection, native undo history and composing spans.
@@ -207,6 +335,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   }
   override fun onTouchEvent(event: MotionEvent): Boolean {
     if(event.actionMasked==MotionEvent.ACTION_DOWN) {
+      emitTouch("start",event)
       val currentLayout=layout
       previewTouch=previews.firstOrNull { span ->
         val line=currentLayout?.getLineForOffset(span.range.start) ?: return@firstOrNull false
@@ -222,8 +351,11 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
       if(kotlin.math.abs(event.x-touchX)>slop || kotlin.math.abs(event.y-touchY)>slop)touchMoved=true
     }
     // Let EditText own dragging/scrolling, including gestures over React previews.
+    if(event.actionMasked==MotionEvent.ACTION_MOVE && !configuration.scrollEnabled)return true
     val handled=super.onTouchEvent(event)
     if(event.actionMasked==MotionEvent.ACTION_UP || event.actionMasked==MotionEvent.ACTION_CANCEL) {
+      emitTouch("end",event)
+      if(!touchMoved && event.actionMasked==MotionEvent.ACTION_UP)emitTouch("press",event)
       val range=previewTouch
       previewTouch=null
       if(range!=null) {
@@ -249,14 +381,17 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   }
   override fun onFocusChanged(focused: Boolean,direction: Int,rect: Rect?) {
     super.onFocusChanged(focused,direction,rect)
-    if(ready) post { refreshPresentation() }
+    if(ready) {
+      focusChanged?.invoke(EditorFocus(text=text.toString(),eventCount=eventCount.toDouble(),target=id.toDouble(),focused=focused))
+      post { refreshPresentation() }
+    }
   }
   override fun onScrollChanged(x: Int,y: Int,oldX: Int,oldY: Int) {super.onScrollChanged(x,y,oldX,oldY);emitBlocks()}
   override fun onSizeChanged(w: Int,h: Int,oldW: Int,oldH: Int) {super.onSizeChanged(w,h,oldW,oldH);if(ready)emitBlocks()}
   override fun onLayout(changed: Boolean,left: Int,top: Int,right: Int,bottom: Int) {
     super.onLayout(changed,left,top,right,bottom);if(ready)emitBlocks()
   }
-  fun dispose() {++request;work?.cancel(false);change=null;selection=null;blocksChanged=null}
+  fun dispose() {++request;work?.cancel(false);change=null;selection=null;blocksChanged=null;focusChanged=null;submitted=null;touched=null;measured=null;blurInput()}
   private fun compositionEnded() {
     val pending=pendingExternal
     pendingExternal=null
@@ -267,7 +402,10 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
     val original=super.onCreateInputConnection(info) ?: return null
     return object: InputConnectionWrapper(original,false) {
       override fun finishComposingText(): Boolean {val result=super.finishComposingText();post {compositionEnded()};return result}
-      override fun commitText(value: CharSequence?,position: Int): Boolean {val result=super.commitText(value,position);post {compositionEnded()};return result}
+      override fun performEditorAction(actionCode: Int): Boolean = if(configuration.submitBehavior!="newline")submitInput() else super.performEditorAction(actionCode)
+      override fun commitText(value: CharSequence?,position: Int): Boolean {
+        if(value?.toString()=="\n" && configuration.submitBehavior!="newline") {super.finishComposingText();return submitInput()}
+        val result=super.commitText(value,position);post {compositionEnded()};return result}
     }
   }
   private fun emitBlocks() {
@@ -283,8 +421,36 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
         EditorBlock(when(range.kind){21->"fence";22->"latex_block";else->"table"},range.start.toDouble(),range.end.toDouble(),previews.none {it.range==range},
           paddingLeft/density.toDouble(),(layout.getLineTop(line)+paddingTop-scrollY)/density.toDouble(),max(0,width-paddingLeft-paddingRight)/density.toDouble(),height/density.toDouble())
       }.toTypedArray()
+      val metrics=EditorMetrics(
+        max(0,layout.width+paddingLeft+paddingRight)/density.toDouble(),
+        (layout.height+compoundPaddingTop+compoundPaddingBottom)/density.toDouble(),
+        (lineHeight*configuration.numberOfLines+compoundPaddingTop+compoundPaddingBottom)/density.toDouble(),id.toDouble())
+      if(metrics!=lastMetrics){lastMetrics=metrics;measured?.invoke(metrics)}
       val event=EditorLayout(text.toString(),eventCount.toDouble(),values)
       if(event!=lastLayout){lastLayout=event;blocksChanged?.invoke(event)}
+    }
+  }
+  private inner class InlineStyleSpan(private val style: EditorInlineStyle): MetricAffectingSpan(), EditorSpan {
+    override fun updateMeasureState(paint: TextPaint) {
+      val original=paint.typeface ?: Typeface.DEFAULT
+      val family=if(style.fontFamily.isEmpty())original else Typeface.create(style.fontFamily,Typeface.NORMAL)
+      val weight=style.fontWeight.toIntOrNull() ?: when(style.fontWeight){"normal"->400;"bold"->700;else->if(Build.VERSION.SDK_INT>=28)original.weight else if(original.isBold)700 else 400}
+      val italic=if(style.fontStyle.isEmpty())original.isItalic else style.fontStyle=="italic"
+      paint.typeface=if(Build.VERSION.SDK_INT>=28)Typeface.create(family,weight,italic) else Typeface.create(family,(if(weight>=600)Typeface.BOLD else Typeface.NORMAL) or (if(italic)Typeface.ITALIC else 0))
+      if(style.fontSize>0) {
+        val attributes=appliedAttributes ?: EditorDefaults.textAttributes
+        val scale=if(attributes.allowFontScaling)min(resources.configuration.fontScale.toDouble(),if(attributes.maxFontSizeMultiplier>=1)attributes.maxFontSizeMultiplier else Double.POSITIVE_INFINITY) else 1.0
+        paint.textSize=(style.fontSize*density*scale).toFloat()
+      }
+    }
+    override fun updateDrawState(paint: TextPaint) {
+      updateMeasureState(paint)
+      if(style.hasColor)paint.color=style.color.toLong().toInt()
+      if(style.hasBackground)paint.bgColor=style.backgroundColor.toLong().toInt()
+      if(style.decoration.isNotEmpty()) {
+        paint.isUnderlineText=style.decoration.contains("underline")
+        paint.isStrikeThruText=style.decoration.contains("line-through")
+      }
     }
   }
   private abstract inner class SourceReplacement(val range: SourceRange): ReplacementSpan()
@@ -305,7 +471,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   // ranges. IME, selection and undo continue to operate on the original source.
   private inner class FoldedSource(val source: CharSequence): Spanned, GetChars {
     override val length get()=source.length
-    override fun get(index: Int): Char = if(source[index]=='\n' && previews.any { index>=it.range.start&&index<it.range.end }) '\u2060' else source[index]
+    override fun get(index: Int): Char = if(!configuration.multiline && source[index]=='\n')' ' else if(source[index]=='\n' && previews.any { index>=it.range.start&&index<it.range.end }) '\u2060' else source[index]
     override fun getChars(start: Int,end: Int,dest: CharArray,destoff: Int) {for(i in start until end)dest[destoff+i-start]=get(i)}
     override fun toString(): String=CharArray(length){get(it)}.concatToString()
     override fun subSequence(startIndex: Int,endIndex: Int): CharSequence {

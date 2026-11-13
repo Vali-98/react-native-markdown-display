@@ -22,19 +22,29 @@ namespace margelo::nitro::markdown::views {
                                                              const react::RawProps& rawProps):
     react::ViewProps(context, sourceProps, rawProps, filterObjectKeys),
     state(nitro::ReactProp<EditorState>::fromRawValue("MarkdownInputView", "state", rawProps, sourceProps.state)),
+    selectionState(nitro::ReactProp<EditorSelection>::fromRawValue("MarkdownInputView", "selectionState", rawProps, sourceProps.selectionState)),
+    inlineStyles(nitro::ReactProp<std::vector<EditorInlineStyle>>::fromRawValue("MarkdownInputView", "inlineStyles", rawProps, sourceProps.inlineStyles)),
+    configuration(nitro::ReactProp<EditorConfiguration>::fromRawValue("MarkdownInputView", "configuration", rawProps, sourceProps.configuration)),
+    textAttributes(nitro::ReactProp<EditorTextAttributes>::fromRawValue("MarkdownInputView", "textAttributes", rawProps, sourceProps.textAttributes)),
     previewSizes(nitro::ReactProp<EditorPreviewSizes>::fromRawValue("MarkdownInputView", "previewSizes", rawProps, sourceProps.previewSizes)),
     placeholder(nitro::ReactProp<std::string>::fromRawValue("MarkdownInputView", "placeholder", rawProps, sourceProps.placeholder)),
-    textColor(nitro::ReactProp<std::string>::fromRawValue("MarkdownInputView", "textColor", rawProps, sourceProps.textColor)),
-    delimiterColor(nitro::ReactProp<std::string>::fromRawValue("MarkdownInputView", "delimiterColor", rawProps, sourceProps.delimiterColor)),
+    textColor(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "textColor", rawProps, sourceProps.textColor)),
+    placeholderColor(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "placeholderColor", rawProps, sourceProps.placeholderColor)),
+    selectionColor(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "selectionColor", rawProps, sourceProps.selectionColor)),
+    cursorColor(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "cursorColor", rawProps, sourceProps.cursorColor)),
+    delimiterColor(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "delimiterColor", rawProps, sourceProps.delimiterColor)),
     fontSize(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "fontSize", rawProps, sourceProps.fontSize)),
-    editable(nitro::ReactProp<bool>::fromRawValue("MarkdownInputView", "editable", rawProps, sourceProps.editable)),
     previews(nitro::ReactProp<bool>::fromRawValue("MarkdownInputView", "previews", rawProps, sourceProps.previews)),
     typographer(nitro::ReactProp<bool>::fromRawValue("MarkdownInputView", "typographer", rawProps, sourceProps.typographer)),
-    quoteColor(nitro::ReactProp<std::string>::fromRawValue("MarkdownInputView", "quoteColor", rawProps, sourceProps.quoteColor)),
-    linkColor(nitro::ReactProp<std::string>::fromRawValue("MarkdownInputView", "linkColor", rawProps, sourceProps.linkColor)),
+    quoteColor(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "quoteColor", rawProps, sourceProps.quoteColor)),
+    linkColor(nitro::ReactProp<double>::fromRawValue("MarkdownInputView", "linkColor", rawProps, sourceProps.linkColor)),
     onChange(nitro::ReactProp<std::optional<std::function<void(const EditorChange& /* event */)>>>::fromRawValue("MarkdownInputView", "onChange", rawProps, sourceProps.onChange)),
     onSelection(nitro::ReactProp<std::optional<std::function<void(const EditorSelection& /* selection */)>>>::fromRawValue("MarkdownInputView", "onSelection", rawProps, sourceProps.onSelection)),
     onBlocks(nitro::ReactProp<std::optional<std::function<void(const EditorLayout& /* event */)>>>::fromRawValue("MarkdownInputView", "onBlocks", rawProps, sourceProps.onBlocks)),
+    onFocusChanged(nitro::ReactProp<std::optional<std::function<void(const EditorFocus& /* event */)>>>::fromRawValue("MarkdownInputView", "onFocusChanged", rawProps, sourceProps.onFocusChanged)),
+    onSubmit(nitro::ReactProp<std::optional<std::function<void(const EditorEvent& /* event */)>>>::fromRawValue("MarkdownInputView", "onSubmit", rawProps, sourceProps.onSubmit)),
+    onTouch(nitro::ReactProp<std::optional<std::function<void(const EditorTouch& /* event */)>>>::fromRawValue("MarkdownInputView", "onTouch", rawProps, sourceProps.onTouch)),
+    onMetrics(nitro::ReactProp<std::optional<std::function<void(const EditorMetrics& /* event */)>>>::fromRawValue("MarkdownInputView", "onMetrics", rawProps, sourceProps.onMetrics)),
     hybridRef(nitro::ReactProp<std::optional<std::function<void(const std::shared_ptr<HybridMarkdownInputViewSpec>& /* ref */)>>>::fromRawValue("MarkdownInputView", "hybridRef", rawProps, sourceProps.hybridRef)) {
 #ifdef ANDROID
     nitro::RawPropsCompat::initializeDynamicProps(*this, sourceProps, rawProps, filterObjectKeys);
@@ -44,12 +54,18 @@ namespace margelo::nitro::markdown::views {
   bool HybridMarkdownInputViewProps::filterObjectKeys(const std::string& propName) {
     switch (hashString(propName)) {
       case hashString("state"): return true;
+      case hashString("selectionState"): return true;
+      case hashString("inlineStyles"): return true;
+      case hashString("configuration"): return true;
+      case hashString("textAttributes"): return true;
       case hashString("previewSizes"): return true;
       case hashString("placeholder"): return true;
       case hashString("textColor"): return true;
+      case hashString("placeholderColor"): return true;
+      case hashString("selectionColor"): return true;
+      case hashString("cursorColor"): return true;
       case hashString("delimiterColor"): return true;
       case hashString("fontSize"): return true;
-      case hashString("editable"): return true;
       case hashString("previews"): return true;
       case hashString("typographer"): return true;
       case hashString("quoteColor"): return true;
@@ -57,6 +73,10 @@ namespace margelo::nitro::markdown::views {
       case hashString("onChange"): return true;
       case hashString("onSelection"): return true;
       case hashString("onBlocks"): return true;
+      case hashString("onFocusChanged"): return true;
+      case hashString("onSubmit"): return true;
+      case hashString("onTouch"): return true;
+      case hashString("onMetrics"): return true;
       case hashString("hybridRef"): return true;
       default: return false;
     }

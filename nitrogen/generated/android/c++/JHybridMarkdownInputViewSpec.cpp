@@ -9,26 +9,48 @@
 
 // Forward declaration of `EditorState` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorState; }
+// Forward declaration of `EditorSelection` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorSelection; }
+// Forward declaration of `EditorInlineStyle` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorInlineStyle; }
+// Forward declaration of `EditorConfiguration` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorConfiguration; }
+// Forward declaration of `EditorTextAttributes` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorTextAttributes; }
 // Forward declaration of `EditorPreviewSizes` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorPreviewSizes; }
 // Forward declaration of `EditorPreviewSize` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorPreviewSize; }
 // Forward declaration of `EditorChange` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorChange; }
-// Forward declaration of `EditorSelection` to properly resolve imports.
-namespace margelo::nitro::markdown { struct EditorSelection; }
 // Forward declaration of `EditorLayout` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorLayout; }
 // Forward declaration of `EditorBlock` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorBlock; }
+// Forward declaration of `EditorFocus` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorFocus; }
+// Forward declaration of `EditorEvent` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorEvent; }
+// Forward declaration of `EditorTouch` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorTouch; }
+// Forward declaration of `EditorMetrics` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorMetrics; }
 
 #include "EditorState.hpp"
 #include "JEditorState.hpp"
 #include <string>
+#include "EditorSelection.hpp"
+#include "JEditorSelection.hpp"
+#include "EditorInlineStyle.hpp"
+#include <vector>
+#include "JEditorInlineStyle.hpp"
+#include "EditorConfiguration.hpp"
+#include "JEditorConfiguration.hpp"
+#include "EditorTextAttributes.hpp"
+#include "JEditorTextAttributes.hpp"
 #include "EditorPreviewSizes.hpp"
 #include "JEditorPreviewSizes.hpp"
 #include "EditorPreviewSize.hpp"
-#include <vector>
 #include "JEditorPreviewSize.hpp"
 #include "EditorChange.hpp"
 #include <functional>
@@ -36,14 +58,24 @@ namespace margelo::nitro::markdown { struct EditorBlock; }
 #include "JFunc_void_EditorChange.hpp"
 #include <NitroModules/JNICallable.hpp>
 #include "JEditorChange.hpp"
-#include "EditorSelection.hpp"
 #include "JFunc_void_EditorSelection.hpp"
-#include "JEditorSelection.hpp"
 #include "EditorLayout.hpp"
 #include "JFunc_void_EditorLayout.hpp"
 #include "JEditorLayout.hpp"
 #include "EditorBlock.hpp"
 #include "JEditorBlock.hpp"
+#include "EditorFocus.hpp"
+#include "JFunc_void_EditorFocus.hpp"
+#include "JEditorFocus.hpp"
+#include "EditorEvent.hpp"
+#include "JFunc_void_EditorEvent.hpp"
+#include "JEditorEvent.hpp"
+#include "EditorTouch.hpp"
+#include "JFunc_void_EditorTouch.hpp"
+#include "JEditorTouch.hpp"
+#include "EditorMetrics.hpp"
+#include "JFunc_void_EditorMetrics.hpp"
+#include "JEditorMetrics.hpp"
 
 namespace margelo::nitro::markdown {
 
@@ -84,6 +116,60 @@ namespace margelo::nitro::markdown {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JEditorState> /* state */)>("setState");
     method(_javaPart, JEditorState::fromCpp(state));
   }
+  EditorSelection JHybridMarkdownInputViewSpec::getSelectionState() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JEditorSelection>()>("getSelectionState");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
+  }
+  void JHybridMarkdownInputViewSpec::setSelectionState(const EditorSelection& selectionState) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JEditorSelection> /* selectionState */)>("setSelectionState");
+    method(_javaPart, JEditorSelection::fromCpp(selectionState));
+  }
+  std::vector<EditorInlineStyle> JHybridMarkdownInputViewSpec::getInlineStyles() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<JEditorInlineStyle>>()>("getInlineStyles");
+    auto __result = method(_javaPart);
+    return [&](auto&& __input) {
+      size_t __size = __input->size();
+      std::vector<EditorInlineStyle> __vector;
+      __vector.reserve(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        auto __element = __input->getElement(__i);
+        __vector.push_back(__element->toCpp());
+      }
+      return __vector;
+    }(__result);
+  }
+  void JHybridMarkdownInputViewSpec::setInlineStyles(const std::vector<EditorInlineStyle>& inlineStyles) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JArrayClass<JEditorInlineStyle>> /* inlineStyles */)>("setInlineStyles");
+    method(_javaPart, [&](auto&& __input) {
+      size_t __size = __input.size();
+      jni::local_ref<jni::JArrayClass<JEditorInlineStyle>> __array = jni::JArrayClass<JEditorInlineStyle>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = __input[__i];
+        auto __elementJni = JEditorInlineStyle::fromCpp(__element);
+        __array->setElement(__i, *__elementJni);
+      }
+      return __array;
+    }(inlineStyles));
+  }
+  EditorConfiguration JHybridMarkdownInputViewSpec::getConfiguration() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JEditorConfiguration>()>("getConfiguration");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
+  }
+  void JHybridMarkdownInputViewSpec::setConfiguration(const EditorConfiguration& configuration) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JEditorConfiguration> /* configuration */)>("setConfiguration");
+    method(_javaPart, JEditorConfiguration::fromCpp(configuration));
+  }
+  EditorTextAttributes JHybridMarkdownInputViewSpec::getTextAttributes() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JEditorTextAttributes>()>("getTextAttributes");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
+  }
+  void JHybridMarkdownInputViewSpec::setTextAttributes(const EditorTextAttributes& textAttributes) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JEditorTextAttributes> /* textAttributes */)>("setTextAttributes");
+    method(_javaPart, JEditorTextAttributes::fromCpp(textAttributes));
+  }
   EditorPreviewSizes JHybridMarkdownInputViewSpec::getPreviewSizes() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JEditorPreviewSizes>()>("getPreviewSizes");
     auto __result = method(_javaPart);
@@ -102,23 +188,50 @@ namespace margelo::nitro::markdown {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* placeholder */)>("setPlaceholder");
     method(_javaPart, jni::make_jstring(placeholder));
   }
-  std::string JHybridMarkdownInputViewSpec::getTextColor() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getTextColor");
+  double JHybridMarkdownInputViewSpec::getTextColor() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getTextColor");
     auto __result = method(_javaPart);
-    return __result->toStdString();
+    return __result;
   }
-  void JHybridMarkdownInputViewSpec::setTextColor(const std::string& textColor) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* textColor */)>("setTextColor");
-    method(_javaPart, jni::make_jstring(textColor));
+  void JHybridMarkdownInputViewSpec::setTextColor(double textColor) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* textColor */)>("setTextColor");
+    method(_javaPart, textColor);
   }
-  std::string JHybridMarkdownInputViewSpec::getDelimiterColor() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getDelimiterColor");
+  double JHybridMarkdownInputViewSpec::getPlaceholderColor() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getPlaceholderColor");
     auto __result = method(_javaPart);
-    return __result->toStdString();
+    return __result;
   }
-  void JHybridMarkdownInputViewSpec::setDelimiterColor(const std::string& delimiterColor) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* delimiterColor */)>("setDelimiterColor");
-    method(_javaPart, jni::make_jstring(delimiterColor));
+  void JHybridMarkdownInputViewSpec::setPlaceholderColor(double placeholderColor) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* placeholderColor */)>("setPlaceholderColor");
+    method(_javaPart, placeholderColor);
+  }
+  double JHybridMarkdownInputViewSpec::getSelectionColor() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getSelectionColor");
+    auto __result = method(_javaPart);
+    return __result;
+  }
+  void JHybridMarkdownInputViewSpec::setSelectionColor(double selectionColor) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* selectionColor */)>("setSelectionColor");
+    method(_javaPart, selectionColor);
+  }
+  double JHybridMarkdownInputViewSpec::getCursorColor() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getCursorColor");
+    auto __result = method(_javaPart);
+    return __result;
+  }
+  void JHybridMarkdownInputViewSpec::setCursorColor(double cursorColor) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* cursorColor */)>("setCursorColor");
+    method(_javaPart, cursorColor);
+  }
+  double JHybridMarkdownInputViewSpec::getDelimiterColor() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getDelimiterColor");
+    auto __result = method(_javaPart);
+    return __result;
+  }
+  void JHybridMarkdownInputViewSpec::setDelimiterColor(double delimiterColor) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* delimiterColor */)>("setDelimiterColor");
+    method(_javaPart, delimiterColor);
   }
   double JHybridMarkdownInputViewSpec::getFontSize() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getFontSize");
@@ -128,15 +241,6 @@ namespace margelo::nitro::markdown {
   void JHybridMarkdownInputViewSpec::setFontSize(double fontSize) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* fontSize */)>("setFontSize");
     method(_javaPart, fontSize);
-  }
-  bool JHybridMarkdownInputViewSpec::getEditable() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("getEditable");
-    auto __result = method(_javaPart);
-    return static_cast<bool>(__result);
-  }
-  void JHybridMarkdownInputViewSpec::setEditable(bool editable) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jboolean /* editable */)>("setEditable");
-    method(_javaPart, editable);
   }
   bool JHybridMarkdownInputViewSpec::getPreviews() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("getPreviews");
@@ -156,23 +260,23 @@ namespace margelo::nitro::markdown {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jboolean /* typographer */)>("setTypographer");
     method(_javaPart, typographer);
   }
-  std::string JHybridMarkdownInputViewSpec::getQuoteColor() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getQuoteColor");
+  double JHybridMarkdownInputViewSpec::getQuoteColor() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getQuoteColor");
     auto __result = method(_javaPart);
-    return __result->toStdString();
+    return __result;
   }
-  void JHybridMarkdownInputViewSpec::setQuoteColor(const std::string& quoteColor) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* quoteColor */)>("setQuoteColor");
-    method(_javaPart, jni::make_jstring(quoteColor));
+  void JHybridMarkdownInputViewSpec::setQuoteColor(double quoteColor) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* quoteColor */)>("setQuoteColor");
+    method(_javaPart, quoteColor);
   }
-  std::string JHybridMarkdownInputViewSpec::getLinkColor() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getLinkColor");
+  double JHybridMarkdownInputViewSpec::getLinkColor() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getLinkColor");
     auto __result = method(_javaPart);
-    return __result->toStdString();
+    return __result;
   }
-  void JHybridMarkdownInputViewSpec::setLinkColor(const std::string& linkColor) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* linkColor */)>("setLinkColor");
-    method(_javaPart, jni::make_jstring(linkColor));
+  void JHybridMarkdownInputViewSpec::setLinkColor(double linkColor) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* linkColor */)>("setLinkColor");
+    method(_javaPart, linkColor);
   }
   std::optional<std::function<void(const EditorChange& /* event */)>> JHybridMarkdownInputViewSpec::getOnChange() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_EditorChange::javaobject>()>("getOnChange_cxx");
@@ -225,6 +329,74 @@ namespace margelo::nitro::markdown {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_EditorLayout::javaobject> /* onBlocks */)>("setOnBlocks_cxx");
     method(_javaPart, onBlocks.has_value() ? JFunc_void_EditorLayout_cxx::fromCpp(onBlocks.value()) : nullptr);
   }
+  std::optional<std::function<void(const EditorFocus& /* event */)>> JHybridMarkdownInputViewSpec::getOnFocusChanged() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_EditorFocus::javaobject>()>("getOnFocusChanged_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const EditorFocus& /* event */)> {
+      if (__result->isInstanceOf(JFunc_void_EditorFocus_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_EditorFocus_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_EditorFocus, void(EditorFocus)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridMarkdownInputViewSpec::setOnFocusChanged(const std::optional<std::function<void(const EditorFocus& /* event */)>>& onFocusChanged) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_EditorFocus::javaobject> /* onFocusChanged */)>("setOnFocusChanged_cxx");
+    method(_javaPart, onFocusChanged.has_value() ? JFunc_void_EditorFocus_cxx::fromCpp(onFocusChanged.value()) : nullptr);
+  }
+  std::optional<std::function<void(const EditorEvent& /* event */)>> JHybridMarkdownInputViewSpec::getOnSubmit() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_EditorEvent::javaobject>()>("getOnSubmit_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const EditorEvent& /* event */)> {
+      if (__result->isInstanceOf(JFunc_void_EditorEvent_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_EditorEvent_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_EditorEvent, void(EditorEvent)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridMarkdownInputViewSpec::setOnSubmit(const std::optional<std::function<void(const EditorEvent& /* event */)>>& onSubmit) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_EditorEvent::javaobject> /* onSubmit */)>("setOnSubmit_cxx");
+    method(_javaPart, onSubmit.has_value() ? JFunc_void_EditorEvent_cxx::fromCpp(onSubmit.value()) : nullptr);
+  }
+  std::optional<std::function<void(const EditorTouch& /* event */)>> JHybridMarkdownInputViewSpec::getOnTouch() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_EditorTouch::javaobject>()>("getOnTouch_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const EditorTouch& /* event */)> {
+      if (__result->isInstanceOf(JFunc_void_EditorTouch_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_EditorTouch_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_EditorTouch, void(EditorTouch)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridMarkdownInputViewSpec::setOnTouch(const std::optional<std::function<void(const EditorTouch& /* event */)>>& onTouch) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_EditorTouch::javaobject> /* onTouch */)>("setOnTouch_cxx");
+    method(_javaPart, onTouch.has_value() ? JFunc_void_EditorTouch_cxx::fromCpp(onTouch.value()) : nullptr);
+  }
+  std::optional<std::function<void(const EditorMetrics& /* event */)>> JHybridMarkdownInputViewSpec::getOnMetrics() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_EditorMetrics::javaobject>()>("getOnMetrics_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const EditorMetrics& /* event */)> {
+      if (__result->isInstanceOf(JFunc_void_EditorMetrics_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_EditorMetrics_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_EditorMetrics, void(EditorMetrics)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridMarkdownInputViewSpec::setOnMetrics(const std::optional<std::function<void(const EditorMetrics& /* event */)>>& onMetrics) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_EditorMetrics::javaobject> /* onMetrics */)>("setOnMetrics_cxx");
+    method(_javaPart, onMetrics.has_value() ? JFunc_void_EditorMetrics_cxx::fromCpp(onMetrics.value()) : nullptr);
+  }
 
   // Methods
   void JHybridMarkdownInputViewSpec::focus() {
@@ -234,6 +406,19 @@ namespace margelo::nitro::markdown {
   void JHybridMarkdownInputViewSpec::blur() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("blur");
     method(_javaPart);
+  }
+  bool JHybridMarkdownInputViewSpec::isFocused() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("isFocused");
+    auto __result = method(_javaPart);
+    return static_cast<bool>(__result);
+  }
+  void JHybridMarkdownInputViewSpec::clear() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("clear");
+    method(_javaPart);
+  }
+  void JHybridMarkdownInputViewSpec::setSelection(double start, double end) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* start */, double /* end */)>("setSelection");
+    method(_javaPart, start, end);
   }
   void JHybridMarkdownInputViewSpec::activate(double offset) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* offset */)>("activate");

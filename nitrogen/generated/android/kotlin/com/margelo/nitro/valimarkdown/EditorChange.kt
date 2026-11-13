@@ -20,34 +20,39 @@ import java.util.Objects
 data class EditorChange(
   @DoNotStrip
   @Keep
+  val selectionStart: Double,
+  @DoNotStrip
+  @Keep
+  val selectionEnd: Double,
+  @DoNotStrip
+  @Keep
   val text: String,
   @DoNotStrip
   @Keep
   val eventCount: Double,
   @DoNotStrip
   @Keep
-  val selectionStart: Double,
-  @DoNotStrip
-  @Keep
-  val selectionEnd: Double
+  val target: Double
 ) {
   /* primary constructor */
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is EditorChange) return false
-    return Objects.deepEquals(this.text, other.text)
-      && Objects.deepEquals(this.eventCount, other.eventCount)
-      && Objects.deepEquals(this.selectionStart, other.selectionStart)
+    return Objects.deepEquals(this.selectionStart, other.selectionStart)
       && Objects.deepEquals(this.selectionEnd, other.selectionEnd)
+      && Objects.deepEquals(this.text, other.text)
+      && Objects.deepEquals(this.eventCount, other.eventCount)
+      && Objects.deepEquals(this.target, other.target)
   }
 
   override fun hashCode(): Int {
     return arrayOf<Any?>(
+      selectionStart,
+      selectionEnd,
       text,
       eventCount,
-      selectionStart,
-      selectionEnd
+      target
     ).contentDeepHashCode()
   }
 
@@ -59,8 +64,8 @@ data class EditorChange(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(text: String, eventCount: Double, selectionStart: Double, selectionEnd: Double): EditorChange {
-      return EditorChange(text, eventCount, selectionStart, selectionEnd)
+    private fun fromCpp(selectionStart: Double, selectionEnd: Double, text: String, eventCount: Double, target: Double): EditorChange {
+      return EditorChange(selectionStart, selectionEnd, text, eventCount, target)
     }
   }
 }

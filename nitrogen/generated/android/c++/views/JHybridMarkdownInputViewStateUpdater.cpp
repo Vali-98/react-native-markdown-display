@@ -59,6 +59,26 @@ void JHybridMarkdownInputViewStateUpdater::updateViewProps(jni::alias_ref<jni::J
     hybridView->setState(newProps->state.get());
   }
   if (oldProps == nullptr
+        ? newProps->selectionState.isProvided()
+        : !newProps->selectionState.hasSameValue(oldProps->selectionState)) {
+    hybridView->setSelectionState(newProps->selectionState.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->inlineStyles.isProvided()
+        : !newProps->inlineStyles.hasSameValue(oldProps->inlineStyles)) {
+    hybridView->setInlineStyles(newProps->inlineStyles.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->configuration.isProvided()
+        : !newProps->configuration.hasSameValue(oldProps->configuration)) {
+    hybridView->setConfiguration(newProps->configuration.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->textAttributes.isProvided()
+        : !newProps->textAttributes.hasSameValue(oldProps->textAttributes)) {
+    hybridView->setTextAttributes(newProps->textAttributes.get());
+  }
+  if (oldProps == nullptr
         ? newProps->previewSizes.isProvided()
         : !newProps->previewSizes.hasSameValue(oldProps->previewSizes)) {
     hybridView->setPreviewSizes(newProps->previewSizes.get());
@@ -74,6 +94,21 @@ void JHybridMarkdownInputViewStateUpdater::updateViewProps(jni::alias_ref<jni::J
     hybridView->setTextColor(newProps->textColor.get());
   }
   if (oldProps == nullptr
+        ? newProps->placeholderColor.isProvided()
+        : !newProps->placeholderColor.hasSameValue(oldProps->placeholderColor)) {
+    hybridView->setPlaceholderColor(newProps->placeholderColor.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->selectionColor.isProvided()
+        : !newProps->selectionColor.hasSameValue(oldProps->selectionColor)) {
+    hybridView->setSelectionColor(newProps->selectionColor.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->cursorColor.isProvided()
+        : !newProps->cursorColor.hasSameValue(oldProps->cursorColor)) {
+    hybridView->setCursorColor(newProps->cursorColor.get());
+  }
+  if (oldProps == nullptr
         ? newProps->delimiterColor.isProvided()
         : !newProps->delimiterColor.hasSameValue(oldProps->delimiterColor)) {
     hybridView->setDelimiterColor(newProps->delimiterColor.get());
@@ -82,11 +117,6 @@ void JHybridMarkdownInputViewStateUpdater::updateViewProps(jni::alias_ref<jni::J
         ? newProps->fontSize.isProvided()
         : !newProps->fontSize.hasSameValue(oldProps->fontSize)) {
     hybridView->setFontSize(newProps->fontSize.get());
-  }
-  if (oldProps == nullptr
-        ? newProps->editable.isProvided()
-        : !newProps->editable.hasSameValue(oldProps->editable)) {
-    hybridView->setEditable(newProps->editable.get());
   }
   if (oldProps == nullptr
         ? newProps->previews.isProvided()
@@ -122,6 +152,26 @@ void JHybridMarkdownInputViewStateUpdater::updateViewProps(jni::alias_ref<jni::J
         ? newProps->onBlocks.isProvided()
         : !newProps->onBlocks.hasSameValue(oldProps->onBlocks)) {
     hybridView->setOnBlocks(newProps->onBlocks.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->onFocusChanged.isProvided()
+        : !newProps->onFocusChanged.hasSameValue(oldProps->onFocusChanged)) {
+    hybridView->setOnFocusChanged(newProps->onFocusChanged.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->onSubmit.isProvided()
+        : !newProps->onSubmit.hasSameValue(oldProps->onSubmit)) {
+    hybridView->setOnSubmit(newProps->onSubmit.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->onTouch.isProvided()
+        : !newProps->onTouch.hasSameValue(oldProps->onTouch)) {
+    hybridView->setOnTouch(newProps->onTouch.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->onMetrics.isProvided()
+        : !newProps->onMetrics.hasSameValue(oldProps->onMetrics)) {
+    hybridView->setOnMetrics(newProps->onMetrics.get());
   }
 
   // Update hybridRef if it changed

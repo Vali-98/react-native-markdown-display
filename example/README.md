@@ -17,3 +17,5 @@ For iOS, run `npm run example:pods` followed by `npm run example:ios`.
 In Editor, **Styled previews / Raw text** switches the editing mode. **Typographer** enables display-only symbol and punctuation substitutions. Quote and link examples are included in the sample.
 
 Editor also has **Basic** and **Custom rules** modes. Basic uses the default renderer (TeX source at body text size); Custom rules uses the reference styles and native RaTeX formulas.
+
+**Editor → Input API** tests a Reanimated composer with TextInput-style props, `Keyboard.dismiss()`, a keyboard-hide blur hook, selection events and all three submission behaviors.

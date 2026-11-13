@@ -31,19 +31,22 @@ namespace margelo::nitro::markdown {
     [[nodiscard]]
     EditorChange toCpp() const {
       static const auto clazz = javaClassStatic();
-      static const auto fieldText = clazz->getField<jni::JString>("text");
-      jni::local_ref<jni::JString> text = this->getFieldValue(fieldText);
-      static const auto fieldEventCount = clazz->getField<double>("eventCount");
-      double eventCount = this->getFieldValue(fieldEventCount);
       static const auto fieldSelectionStart = clazz->getField<double>("selectionStart");
       double selectionStart = this->getFieldValue(fieldSelectionStart);
       static const auto fieldSelectionEnd = clazz->getField<double>("selectionEnd");
       double selectionEnd = this->getFieldValue(fieldSelectionEnd);
+      static const auto fieldText = clazz->getField<jni::JString>("text");
+      jni::local_ref<jni::JString> text = this->getFieldValue(fieldText);
+      static const auto fieldEventCount = clazz->getField<double>("eventCount");
+      double eventCount = this->getFieldValue(fieldEventCount);
+      static const auto fieldTarget = clazz->getField<double>("target");
+      double target = this->getFieldValue(fieldTarget);
       return EditorChange(
+        selectionStart,
+        selectionEnd,
         text->toStdString(),
         eventCount,
-        selectionStart,
-        selectionEnd
+        target
       );
     }
 
@@ -53,15 +56,16 @@ namespace margelo::nitro::markdown {
      */
     [[maybe_unused]]
     static jni::local_ref<JEditorChange::javaobject> fromCpp(const EditorChange& value) {
-      using JSignature = JEditorChange(jni::alias_ref<jni::JString>, double, double, double);
+      using JSignature = JEditorChange(double, double, jni::alias_ref<jni::JString>, double, double);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
+        value.selectionStart,
+        value.selectionEnd,
         jni::make_jstring(value.text),
         value.eventCount,
-        value.selectionStart,
-        value.selectionEnd
+        value.target
       );
     }
   };

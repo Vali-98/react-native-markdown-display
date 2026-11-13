@@ -18,13 +18,21 @@
 #include <string>
 
 #include "EditorState.hpp"
+#include "EditorSelection.hpp"
+#include "EditorInlineStyle.hpp"
+#include <vector>
+#include "EditorConfiguration.hpp"
+#include "EditorTextAttributes.hpp"
 #include "EditorPreviewSizes.hpp"
 #include <string>
 #include "EditorChange.hpp"
 #include <functional>
 #include <optional>
-#include "EditorSelection.hpp"
 #include "EditorLayout.hpp"
+#include "EditorFocus.hpp"
+#include "EditorEvent.hpp"
+#include "EditorTouch.hpp"
+#include "EditorMetrics.hpp"
 #include <memory>
 #include "HybridMarkdownInputViewSpec.hpp"
 
@@ -49,30 +57,46 @@ namespace margelo::nitro::markdown::views {
 
   public:
     nitro::ReactProp<EditorState> state;
+    nitro::ReactProp<EditorSelection> selectionState;
+    nitro::ReactProp<std::vector<EditorInlineStyle>> inlineStyles;
+    nitro::ReactProp<EditorConfiguration> configuration;
+    nitro::ReactProp<EditorTextAttributes> textAttributes;
     nitro::ReactProp<EditorPreviewSizes> previewSizes;
     nitro::ReactProp<std::string> placeholder;
-    nitro::ReactProp<std::string> textColor;
-    nitro::ReactProp<std::string> delimiterColor;
+    nitro::ReactProp<double> textColor;
+    nitro::ReactProp<double> placeholderColor;
+    nitro::ReactProp<double> selectionColor;
+    nitro::ReactProp<double> cursorColor;
+    nitro::ReactProp<double> delimiterColor;
     nitro::ReactProp<double> fontSize;
-    nitro::ReactProp<bool> editable;
     nitro::ReactProp<bool> previews;
     nitro::ReactProp<bool> typographer;
-    nitro::ReactProp<std::string> quoteColor;
-    nitro::ReactProp<std::string> linkColor;
+    nitro::ReactProp<double> quoteColor;
+    nitro::ReactProp<double> linkColor;
     nitro::ReactProp<std::optional<std::function<void(const EditorChange& /* event */)>>> onChange;
     nitro::ReactProp<std::optional<std::function<void(const EditorSelection& /* selection */)>>> onSelection;
     nitro::ReactProp<std::optional<std::function<void(const EditorLayout& /* event */)>>> onBlocks;
+    nitro::ReactProp<std::optional<std::function<void(const EditorFocus& /* event */)>>> onFocusChanged;
+    nitro::ReactProp<std::optional<std::function<void(const EditorEvent& /* event */)>>> onSubmit;
+    nitro::ReactProp<std::optional<std::function<void(const EditorTouch& /* event */)>>> onTouch;
+    nitro::ReactProp<std::optional<std::function<void(const EditorMetrics& /* event */)>>> onMetrics;
     nitro::ReactProp<std::optional<std::function<void(const std::shared_ptr<HybridMarkdownInputViewSpec>& /* ref */)>>> hybridRef;
 
     [[nodiscard]]
     bool hasSameProps(const HybridMarkdownInputViewProps& other) const noexcept {
       return state.hasSameValue(other.state) &&
+             selectionState.hasSameValue(other.selectionState) &&
+             inlineStyles.hasSameValue(other.inlineStyles) &&
+             configuration.hasSameValue(other.configuration) &&
+             textAttributes.hasSameValue(other.textAttributes) &&
              previewSizes.hasSameValue(other.previewSizes) &&
              placeholder.hasSameValue(other.placeholder) &&
              textColor.hasSameValue(other.textColor) &&
+             placeholderColor.hasSameValue(other.placeholderColor) &&
+             selectionColor.hasSameValue(other.selectionColor) &&
+             cursorColor.hasSameValue(other.cursorColor) &&
              delimiterColor.hasSameValue(other.delimiterColor) &&
              fontSize.hasSameValue(other.fontSize) &&
-             editable.hasSameValue(other.editable) &&
              previews.hasSameValue(other.previews) &&
              typographer.hasSameValue(other.typographer) &&
              quoteColor.hasSameValue(other.quoteColor) &&
@@ -80,18 +104,28 @@ namespace margelo::nitro::markdown::views {
              onChange.hasSameValue(other.onChange) &&
              onSelection.hasSameValue(other.onSelection) &&
              onBlocks.hasSameValue(other.onBlocks) &&
+             onFocusChanged.hasSameValue(other.onFocusChanged) &&
+             onSubmit.hasSameValue(other.onSubmit) &&
+             onTouch.hasSameValue(other.onTouch) &&
+             onMetrics.hasSameValue(other.onMetrics) &&
              hybridRef.hasSameValue(other.hybridRef);
     }
 
     [[nodiscard]]
     bool hasAnyProvidedProps() const noexcept {
       return state.isProvided() ||
+             selectionState.isProvided() ||
+             inlineStyles.isProvided() ||
+             configuration.isProvided() ||
+             textAttributes.isProvided() ||
              previewSizes.isProvided() ||
              placeholder.isProvided() ||
              textColor.isProvided() ||
+             placeholderColor.isProvided() ||
+             selectionColor.isProvided() ||
+             cursorColor.isProvided() ||
              delimiterColor.isProvided() ||
              fontSize.isProvided() ||
-             editable.isProvided() ||
              previews.isProvided() ||
              typographer.isProvided() ||
              quoteColor.isProvided() ||
@@ -99,6 +133,10 @@ namespace margelo::nitro::markdown::views {
              onChange.isProvided() ||
              onSelection.isProvided() ||
              onBlocks.isProvided() ||
+             onFocusChanged.isProvided() ||
+             onSubmit.isProvided() ||
+             onTouch.isProvided() ||
+             onMetrics.isProvided() ||
              hybridRef.isProvided();
     }
 

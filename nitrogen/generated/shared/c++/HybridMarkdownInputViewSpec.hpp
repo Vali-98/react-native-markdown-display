@@ -15,23 +15,45 @@
 
 // Forward declaration of `EditorState` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorState; }
+// Forward declaration of `EditorSelection` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorSelection; }
+// Forward declaration of `EditorInlineStyle` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorInlineStyle; }
+// Forward declaration of `EditorConfiguration` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorConfiguration; }
+// Forward declaration of `EditorTextAttributes` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorTextAttributes; }
 // Forward declaration of `EditorPreviewSizes` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorPreviewSizes; }
 // Forward declaration of `EditorChange` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorChange; }
-// Forward declaration of `EditorSelection` to properly resolve imports.
-namespace margelo::nitro::markdown { struct EditorSelection; }
 // Forward declaration of `EditorLayout` to properly resolve imports.
 namespace margelo::nitro::markdown { struct EditorLayout; }
+// Forward declaration of `EditorFocus` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorFocus; }
+// Forward declaration of `EditorEvent` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorEvent; }
+// Forward declaration of `EditorTouch` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorTouch; }
+// Forward declaration of `EditorMetrics` to properly resolve imports.
+namespace margelo::nitro::markdown { struct EditorMetrics; }
 
 #include "EditorState.hpp"
+#include "EditorSelection.hpp"
+#include "EditorInlineStyle.hpp"
+#include <vector>
+#include "EditorConfiguration.hpp"
+#include "EditorTextAttributes.hpp"
 #include "EditorPreviewSizes.hpp"
 #include <string>
 #include "EditorChange.hpp"
 #include <functional>
 #include <optional>
-#include "EditorSelection.hpp"
 #include "EditorLayout.hpp"
+#include "EditorFocus.hpp"
+#include "EditorEvent.hpp"
+#include "EditorTouch.hpp"
+#include "EditorMetrics.hpp"
 
 namespace margelo::nitro::markdown {
 
@@ -62,37 +84,60 @@ namespace margelo::nitro::markdown {
       // Properties
       virtual EditorState getState() = 0;
       virtual void setState(const EditorState& state) = 0;
+      virtual EditorSelection getSelectionState() = 0;
+      virtual void setSelectionState(const EditorSelection& selectionState) = 0;
+      virtual std::vector<EditorInlineStyle> getInlineStyles() = 0;
+      virtual void setInlineStyles(const std::vector<EditorInlineStyle>& inlineStyles) = 0;
+      virtual EditorConfiguration getConfiguration() = 0;
+      virtual void setConfiguration(const EditorConfiguration& configuration) = 0;
+      virtual EditorTextAttributes getTextAttributes() = 0;
+      virtual void setTextAttributes(const EditorTextAttributes& textAttributes) = 0;
       virtual EditorPreviewSizes getPreviewSizes() = 0;
       virtual void setPreviewSizes(const EditorPreviewSizes& previewSizes) = 0;
       virtual std::string getPlaceholder() = 0;
       virtual void setPlaceholder(const std::string& placeholder) = 0;
-      virtual std::string getTextColor() = 0;
-      virtual void setTextColor(const std::string& textColor) = 0;
-      virtual std::string getDelimiterColor() = 0;
-      virtual void setDelimiterColor(const std::string& delimiterColor) = 0;
+      virtual double getTextColor() = 0;
+      virtual void setTextColor(double textColor) = 0;
+      virtual double getPlaceholderColor() = 0;
+      virtual void setPlaceholderColor(double placeholderColor) = 0;
+      virtual double getSelectionColor() = 0;
+      virtual void setSelectionColor(double selectionColor) = 0;
+      virtual double getCursorColor() = 0;
+      virtual void setCursorColor(double cursorColor) = 0;
+      virtual double getDelimiterColor() = 0;
+      virtual void setDelimiterColor(double delimiterColor) = 0;
       virtual double getFontSize() = 0;
       virtual void setFontSize(double fontSize) = 0;
-      virtual bool getEditable() = 0;
-      virtual void setEditable(bool editable) = 0;
       virtual bool getPreviews() = 0;
       virtual void setPreviews(bool previews) = 0;
       virtual bool getTypographer() = 0;
       virtual void setTypographer(bool typographer) = 0;
-      virtual std::string getQuoteColor() = 0;
-      virtual void setQuoteColor(const std::string& quoteColor) = 0;
-      virtual std::string getLinkColor() = 0;
-      virtual void setLinkColor(const std::string& linkColor) = 0;
+      virtual double getQuoteColor() = 0;
+      virtual void setQuoteColor(double quoteColor) = 0;
+      virtual double getLinkColor() = 0;
+      virtual void setLinkColor(double linkColor) = 0;
       virtual std::optional<std::function<void(const EditorChange& /* event */)>> getOnChange() = 0;
       virtual void setOnChange(const std::optional<std::function<void(const EditorChange& /* event */)>>& onChange) = 0;
       virtual std::optional<std::function<void(const EditorSelection& /* selection */)>> getOnSelection() = 0;
       virtual void setOnSelection(const std::optional<std::function<void(const EditorSelection& /* selection */)>>& onSelection) = 0;
       virtual std::optional<std::function<void(const EditorLayout& /* event */)>> getOnBlocks() = 0;
       virtual void setOnBlocks(const std::optional<std::function<void(const EditorLayout& /* event */)>>& onBlocks) = 0;
+      virtual std::optional<std::function<void(const EditorFocus& /* event */)>> getOnFocusChanged() = 0;
+      virtual void setOnFocusChanged(const std::optional<std::function<void(const EditorFocus& /* event */)>>& onFocusChanged) = 0;
+      virtual std::optional<std::function<void(const EditorEvent& /* event */)>> getOnSubmit() = 0;
+      virtual void setOnSubmit(const std::optional<std::function<void(const EditorEvent& /* event */)>>& onSubmit) = 0;
+      virtual std::optional<std::function<void(const EditorTouch& /* event */)>> getOnTouch() = 0;
+      virtual void setOnTouch(const std::optional<std::function<void(const EditorTouch& /* event */)>>& onTouch) = 0;
+      virtual std::optional<std::function<void(const EditorMetrics& /* event */)>> getOnMetrics() = 0;
+      virtual void setOnMetrics(const std::optional<std::function<void(const EditorMetrics& /* event */)>>& onMetrics) = 0;
 
     public:
       // Methods
       virtual void focus() = 0;
       virtual void blur() = 0;
+      virtual bool isFocused() = 0;
+      virtual void clear() = 0;
+      virtual void setSelection(double start, double end) = 0;
       virtual void activate(double offset) = 0;
 
     protected:

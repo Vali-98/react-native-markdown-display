@@ -26,6 +26,7 @@
     "test:quotes": "node --test tests/LegacyQuotes.test.cjs",
     "test:controller": "node --test tests/MarkdownController.test.cjs",
     "test:legacy-performance": "node --test tests/LegacyPerformance.test.cjs",
+    "test:input": "node --test tests/InputCompatibility.test.cjs tests/MathLayout.test.cjs",
     "test:typography": "node --test tests/Typography.test.cjs",
     "test:reveal": "node --test tests/RevealPlan.test.cjs tests/AnimationSettings.test.cjs"
   },

@@ -60,6 +60,7 @@ const input = useRef<MarkdownInputRef>(null)
 
 <MarkdownInput
   ref={input}
+  multiline
   value={value}
   onChangeText={setValue}
   style={{ flex: 1 }}
@@ -71,7 +72,13 @@ const input = useRef<MarkdownInputRef>(null)
 />
 ```
 
-The experimental Android editor keeps Markdown source in a native input and styles inline text while keeping delimiters visible. Top-level math blocks, fenced code and tables use the existing render rules for previews; placing the cursor inside reveals their source. Preview taps activate editing. `markdownStyle` styles previews; `textColor`, `fontSize` and `delimiterColor` style editable text. The ref exposes `focus()`, `blur()` and `activate(sourceOffset)`, with UTF-16 offsets.
+The experimental Android editor keeps Markdown source in a native input and styles inline text while keeping delimiters visible. Top-level math blocks, fenced code and tables use the existing render rules for previews; placing the cursor inside reveals their source. Preview taps activate editing. `markdownStyle` styles Markdown previews and native inline formatting. Quote/link styles use `double_quote` and `link`; native spans support color, background color, font size/family/weight/style, and underline/strikethrough. Custom render rules apply to React block previews.
+
+Use `textStyle` for the editable source and `viewStyle` for borders, background, and layout. TextInput-style `style` also works: text and padding fields configure the native source input, while view fields configure its container. Editable-source text styles never cascade into React previews. `delimiterColor` controls source delimiters.
+
+The composer API supports controlled `value` or uncontrolled `defaultValue`, placeholder colors, focus/blur/press/change/selection/content-size events, selection, line count, keyboard type, capitalization, autocorrect, length limits and editable/read-only state. Events use the TextInput `event.nativeEvent` shape. As with TextInput, `multiline` defaults to false. `submitBehavior` accepts `newline`, `submit`, or `blurAndSubmit`; Shift+Enter inserts a newline in multiline submission modes.
+
+The ref supports `focus()`, `blur()`, `isFocused()`, `clear()`, `setSelection(start, end)` and native measurement methods, plus `activate(sourceOffset)`. Offsets use UTF-16. Use `MarkdownInputRef` for your ref type. `Keyboard.dismiss()` and the keyboard-hide blur hook work with React Native's focus registry. `Animated.createAnimatedComponent(MarkdownInput)` supports layout and outer view animations; text/padding animation through native animated props is not implemented. This is a supported subset of TextInput, not its entire platform-specific API.
 
 Set `previews={false}` for unstyled raw-source editing. `typographer` is off by default and enables display-only symbols and punctuation replacements such as `(c)` → ©, `...` → …, `--` → – and `---` → —. It is also available on `<Markdown>`. The editor reveals original tokens under the cursor and never changes your controlled value; raw mode disables these substitutions. Code, math and link URLs remain literal. Inline quotes are colored; link labels are colored and underlined, with their Markdown syntax muted. Links remain editable rather than opening on tap.
 

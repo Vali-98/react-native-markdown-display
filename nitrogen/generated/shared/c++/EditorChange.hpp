@@ -39,14 +39,15 @@ namespace margelo::nitro::markdown {
    */
   struct EditorChange final {
   public:
-    std::string text     SWIFT_PRIVATE;
-    double eventCount     SWIFT_PRIVATE;
     double selectionStart     SWIFT_PRIVATE;
     double selectionEnd     SWIFT_PRIVATE;
+    std::string text     SWIFT_PRIVATE;
+    double eventCount     SWIFT_PRIVATE;
+    double target     SWIFT_PRIVATE;
 
   public:
     EditorChange() = default;
-    explicit EditorChange(std::string text, double eventCount, double selectionStart, double selectionEnd): text(text), eventCount(eventCount), selectionStart(selectionStart), selectionEnd(selectionEnd) {}
+    explicit EditorChange(double selectionStart, double selectionEnd, std::string text, double eventCount, double target): selectionStart(selectionStart), selectionEnd(selectionEnd), text(text), eventCount(eventCount), target(target) {}
 
   public:
     friend bool operator==(const EditorChange& lhs, const EditorChange& rhs) = default;
@@ -62,18 +63,20 @@ namespace margelo::nitro {
     static inline margelo::nitro::markdown::EditorChange fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::markdown::EditorChange(
+        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "selectionStart"))),
+        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "selectionEnd"))),
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "text"))),
         JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "eventCount"))),
-        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "selectionStart"))),
-        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "selectionEnd")))
+        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "target")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::markdown::EditorChange& arg) {
       jsi::Object obj(runtime);
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "text"), JSIConverter<std::string>::toJSI(runtime, arg.text));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "eventCount"), JSIConverter<double>::toJSI(runtime, arg.eventCount));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "selectionStart"), JSIConverter<double>::toJSI(runtime, arg.selectionStart));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "selectionEnd"), JSIConverter<double>::toJSI(runtime, arg.selectionEnd));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "text"), JSIConverter<std::string>::toJSI(runtime, arg.text));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "eventCount"), JSIConverter<double>::toJSI(runtime, arg.eventCount));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "target"), JSIConverter<double>::toJSI(runtime, arg.target));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -84,10 +87,11 @@ namespace margelo::nitro {
       if (!nitro::isPlainObject(runtime, obj)) {
         return false;
       }
-      if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "text")))) return false;
-      if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "eventCount")))) return false;
       if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "selectionStart")))) return false;
       if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "selectionEnd")))) return false;
+      if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "text")))) return false;
+      if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "eventCount")))) return false;
+      if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "target")))) return false;
       return true;
     }
   };
