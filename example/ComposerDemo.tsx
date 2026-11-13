@@ -36,7 +36,7 @@ export function ComposerDemo({ onBack }: { onBack: () => void }) {
     </View>
     <View style={{ flex: 1, paddingHorizontal: 12, paddingVertical: 8 }}>
       <AnimatedMarkdownInput ref={input} testID="composer-input" layout={LinearTransition.duration(180)}
-        style={{ color: '#253344', backgroundColor: '#fff', flex: 1, borderWidth: 2, borderColor: editable ? '#7c6ee6' : '#c7c2ce', borderRadius: 14, paddingHorizontal: 18, paddingVertical: 12, fontSize: 14, width: narrow ? '75%' : '100%' }}
+        style={{ color: '#253344', backgroundColor: '#fff', borderWidth: 2, borderColor: editable ? '#7c6ee6' : '#c7c2ce', borderRadius: 14, paddingHorizontal: 18, paddingVertical: 12, fontSize: 14, width: narrow ? '75%' : '100%' }}
         numberOfLines={8} multiline placeholder="Write a message…" placeholderTextColor="#7f788c"
         editable={editable} value={value} onChangeText={setValue}
         onPress={() => setPresses(previous => previous + 1)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}

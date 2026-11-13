@@ -114,6 +114,46 @@ import UIKit
     hybrid.view.replace(hybrid.view.textRange(from: start, to: end)!, withText: "Hello")
     XCTAssertEqual(changes.last?.text, "Hellob")
   }
+  func testPreferredHeightGrowsFromOneLineAndCapsAtLineLimit() async {
+    var latest: EditorMetrics?
+    hybrid.onMetrics = { latest = $0 }
+    load("short")
+    let first = NSPredicate { _, _ in latest != nil }
+    await fulfillment(of: [expectation(for: first, evaluatedWith: nil)], timeout: 5)
+    let one = latest!.preferredHeight
+    XCTAssertLessThan(one, 50)
+    latest = nil
+    load("one\ntwo\nthree")
+    await fulfillment(of: [expectation(for: NSPredicate { _, _ in latest != nil }, evaluatedWith: nil)], timeout: 5)
+    let three = latest!.preferredHeight
+    XCTAssertGreaterThan(three, one * 1.5)
+    latest = nil
+    load((0..<30).map { "line \($0)" }.joined(separator: "\n"))
+    await fulfillment(of: [expectation(for: NSPredicate { _, _ in latest != nil }, evaluatedWith: nil)], timeout: 5)
+    XCTAssertGreaterThan(latest!.height, latest!.preferredHeight)
+    XCTAssertEqual(latest!.preferredHeight, (one - 24) * 4 + 24, accuracy: 1)
+    latest = nil
+    load("")
+    await fulfillment(of: [expectation(for: NSPredicate { _, _ in latest != nil }, evaluatedWith: nil)], timeout: 5)
+    XCTAssertEqual(latest!.preferredHeight, one, accuracy: 1)
+  }
+  func testCaretFollowsTypingAndSelectionInCappedViewport() async {
+    hybrid.view.frame.size.height = 80
+    let text = (0..<30).map { "line \($0)" }.joined(separator: "\n")
+    load(text); hybrid.focus()
+    let end = Double((text as NSString).length)
+    hybrid.setSelection(start: end, end: end)
+    hybrid.view.insertText("\nlast")
+    let visible = NSPredicate { [weak self] _, _ in
+      guard let view = self?.hybrid.view, let selection = view.selectedTextRange else { return false }
+      view.layoutIfNeeded()
+      return view.contentOffset.y > 0 && view.bounds.contains(view.caretRect(for: selection.end))
+    }
+    await fulfillment(of: [expectation(for: visible, evaluatedWith: nil)], timeout: 5)
+    hybrid.setSelection(start: 0, end: 0)
+    hybrid.view.layoutIfNeeded()
+    XCTAssertLessThanOrEqual(hybrid.view.contentOffset.y, 1)
+  }
   func testHeadingSelectionCannotChangeBodyFontOrCompoundHeadingSize() async {
     load("# Heading\n\nBody text")
     let ready = NSPredicate { [weak self] _, _ in

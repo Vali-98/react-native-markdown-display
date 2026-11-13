@@ -91,7 +91,11 @@ test('the component isolates source styling from previews and uses RN focus regi
   })
   const markdownStyle = {paragraph: {fontSize: 32, color: '#abcdef'}}
   const ref = {current: null}
-  const tree = module.MarkdownInput({value: '$$x$$', multiline: true, textStyle: {color: '#123456', fontSize: 27}, markdownStyle}, ref)
+  const tree = module.MarkdownInput({value: '$$x$$', multiline: true, numberOfLines: 8, style: {flex: 1}, textStyle: {color: '#123456', fontSize: 27}, markdownStyle}, ref)
+  // A horizontal flex input still needs its own vertical, one-line height.
+  assert.equal(native.StyleSheet.flatten(tree.props.style).height, 27 * 1.2 + 24)
+  const fixed = module.MarkdownInput({value: '', multiline: true, numberOfLines: 8, viewStyle: {height: 180}}, {current: null})
+  assert.equal(native.StyleSheet.flatten(fixed.props.style).height, 180)
   const elements = []
   const visit = value => {
     if (Array.isArray(value)) return value.forEach(visit)

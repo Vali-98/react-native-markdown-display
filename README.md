@@ -99,6 +99,7 @@ Experimental native editor: delimiters stay visible; tapping a code, table, or m
 | `delimiterColor` | `ColorValue`, `#92979f` | Markdown delimiter color. |
 | `textColor` / `fontSize` | Color / number | Source color and size aliases; default `#202124` / `16`. |
 | `multiline` | `boolean`, `false` | Enable multiline editing. |
+| `numberOfLines` | `number`, `1` | Grow from one line up to this many, then scroll. Explicit height overrides auto-sizing. |
 | `submitBehavior` | `'newline'`, `'submit'`, or `'blurAndSubmit'` | Defaults to `newline` for multiline, otherwise `blurAndSubmit`. |
 
 Supports a [TextInput prop subset](src/InputCompatibility.ts), including placeholders, selection, keyboard options, length limits, read-only state, accessibility, and events (`event.nativeEvent`).

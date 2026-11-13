@@ -66,9 +66,16 @@ export const MarkdownInput = forwardRef<MarkdownInputRef, MarkdownInputProps>(fu
   const fontSize = props.fontSize ?? resolved.fontSize
   const configuration = useMemo(() => inputConfiguration(props), [props.multiline, props.submitBehavior, props.blurOnSubmit, props.returnKeyType, props.autoCorrect, props.autoCapitalize, props.keyboardType, props.maxLength, props.numberOfLines, props.editable, props.readOnly, props.selectTextOnFocus, props.caretHidden, props.contextMenuHidden, props.showSoftInputOnFocus, props.scrollEnabled])
   const scale = resolved.attributes.allowFontScaling ? Math.min(PixelRatio.getFontScale(), resolved.attributes.maxFontSizeMultiplier >= 1 ? resolved.attributes.maxFontSizeMultiplier : Infinity) : 1
-  const estimatedHeight = (resolved.attributes.lineHeight || fontSize * scale * 1.2) * configuration.numberOfLines + resolved.attributes.paddingTop + resolved.attributes.paddingBottom
+  const estimatedHeight = (resolved.attributes.lineHeight || fontSize * scale * 1.2) + resolved.attributes.paddingTop + resolved.attributes.paddingBottom
   const outerStyle = StyleSheet.flatten([resolved.outer, props.viewStyle])
-  const intrinsicSize = outerStyle.height == null && outerStyle.flex == null && outerStyle.flexGrow == null ? { minHeight: preferredHeight || estimatedHeight } : { minHeight: 0 }
+  const flexible =
+  outerStyle.flex != null ||
+  outerStyle.flexGrow != null ||
+  outerStyle.flexBasis != null
+  const intrinsicSize =
+    outerStyle.height == null && !flexible
+        ? { height: preferredHeight || estimatedHeight }
+        : { minHeight: 0 }
   const controlledSelection = useMemo(() => ({ start: props.selection?.start ?? -1, end: props.selection?.end ?? props.selection?.start ?? -1 }), [props.selection?.start, props.selection?.end])
   useImperativeHandle(forwardedRef, () => ({
     focus: () => native.current?.focus(), blur: () => native.current?.blur(),

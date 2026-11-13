@@ -65,6 +65,8 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
   private var lastLayout = ""
   private var lastMetrics = ""
   private var lastWidth: CGFloat = 0
+  private var lastViewportHeight: CGFloat = 0
+  private var caretFollowPending = false
   private let placeholderLabel = UILabel()
   private let history = UndoManager()
   private struct Snapshot { let text: String; let selection: NSRange }
@@ -210,7 +212,7 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
     guard !composing else { return }
     let lo = max(0, min(start, end, sourceLength)), hi = max(0, min(max(start, end), sourceLength))
     refreshPresentation(selection: NSRange(location: lo, length: hi - lo))
-    scrollRangeToVisible(selectedRange)
+    requestCaretVisibility()
     emitSelection()
   }
   func focusInput() {
@@ -291,6 +293,7 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
     styling = true
     history.disableUndoRegistration()
     let scroll = contentOffset
+    let caretWasVisible = selectedTextRange.map { caretRect(for: $0.end).intersects(bounds.inset(by: textContainerInset)) } ?? false
     // Change only the differing substring, preserving the native text storage,
     // input session, and unaffected text while asynchronous analysis completes.
     let old = Array(textStorage.string.utf16), new = Array(next.text.utf16)
@@ -315,6 +318,7 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
     history.enableUndoRegistration()
     styling = false
     if isScrollEnabled { setContentOffset(scroll, animated: false) }
+    if isFirstResponder && caretWasVisible && !isTracking && !isDragging && !isDecelerating { requestCaretVisibility() }
     placeholderLabel.isHidden = !source.isEmpty
     setNeedsLayout()
     emitLayout()
@@ -443,7 +447,7 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
       if compositionStart == nil { compositionStart = previous }
     } else if compositionStart == nil && changedSource { registerUndo(previous) }
     placeholderLabel.isHidden = !source.isEmpty
-    if changedSource { changed(); analyze() }
+    if changedSource { requestCaretVisibility(); changed(); analyze() }
     finishComposition(); refreshPresentation(); emitSelection()
   }
   func textViewDidChangeSelection(_ textView: UITextView) {
@@ -454,6 +458,7 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
     if decodePresentation().0 != source { textViewDidChange(self); return }
     finishComposition()
     if !composing { refreshPresentation() }
+    requestCaretVisibility()
     emitSelection()
   }
   private func finishComposition() {
@@ -479,7 +484,7 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
     registerUndo(previous); shiftedRanges(from: source, to: next)
     source = next; eventCount += 1
     refreshPresentation(selection: NSRange(location: range.location + (text as NSString).length, length: 0))
-    changed(); emitSelection(); analyze()
+    requestCaretVisibility(); changed(); emitSelection(); analyze()
   }
   private func changed() {
     let selection = sourceSelection
@@ -510,6 +515,7 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
   }
   func textViewDidBeginEditing(_ textView: UITextView) {
     owner?.setFocused(true)
+    requestCaretVisibility()
     owner?.onFocusChanged?(EditorFocus(focused: true, text: source, eventCount: Double(eventCount), target: target))
     if owner?.configuration.selectTextOnFocus == true { selectSource(start: 0, end: sourceLength) } else { refreshPresentation() }
   }
@@ -594,8 +600,16 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
     touchOrigin = nil
     super.touchesCancelled(touches, with: event)
   }
+  private func requestCaretVisibility() {
+    caretFollowPending = true
+    setNeedsLayout()
+  }
   override func layoutSubviews() {
     super.layoutSubviews()
+    if lastViewportHeight != bounds.height {
+      lastViewportHeight = bounds.height
+      if isFirstResponder { caretFollowPending = true }
+    }
     if abs(lastWidth - bounds.width) > 0.5 { lastWidth = bounds.width; refreshPresentation() }
     let width = max(0, bounds.width - textContainerInset.left - textContainerInset.right)
     let placeholderSize = placeholderLabel.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
@@ -604,8 +618,25 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
     let surplus = max(0, bounds.height - contentHeight), vertical = owner?.textAttributes.textAlignVertical
     let top = vertical == "bottom" ? surplus : vertical == "center" ? surplus / 2 : 0
     if abs(contentInset.top - top) > 0.5 { contentInset.top = top }
+    if caretFollowPending && !styling && !isTracking && !isDragging && !isDecelerating {
+      caretFollowPending = false
+      if isFirstResponder && isScrollEnabled, let selection = selectedTextRange {
+        layoutManager.ensureLayout(for: textContainer)
+        let caret = caretRect(for: selection.end)
+        let inset = adjustedContentInset
+        let topPadding = inset.top + textContainerInset.top
+        let bottomPadding = inset.bottom + textContainerInset.bottom
+        var y = contentOffset.y
+        if caret.minY < y + topPadding { y = caret.minY - topPadding }
+        else if caret.maxY > y + bounds.height - bottomPadding { y = caret.maxY - bounds.height + bottomPadding }
+        let minimum = -inset.top
+        let maximum = max(minimum, contentSize.height - bounds.height + inset.bottom)
+        setContentOffset(CGPoint(x: contentOffset.x, y: min(maximum, max(minimum, y))), animated: false)
+      }
+    }
     emitLayout()
   }
+  func scrollViewWillBeginDragging(_ scrollView: UIScrollView) { caretFollowPending = false }
   func scrollViewDidScroll(_ scrollView: UIScrollView) { emitLayout() }
   private func emitLayout() {
     guard !disposed, !emitPosted else { return }
@@ -628,9 +659,12 @@ final class MarkdownEditorView: UITextView, UITextViewDelegate, UIGestureRecogni
       }
       let used = self.layoutManager.usedRect(for: self.textContainer), p = self.owner
       let lineHeight = p?.textAttributes.lineHeight ?? 0
-      let preferred = (lineHeight > 0 ? lineHeight : Double(self.sourceFont.lineHeight)) * (p?.configuration.numberOfLines ?? 1) + Double(self.textContainerInset.top + self.textContainerInset.bottom)
+      let rowHeight = lineHeight > 0 ? lineHeight : Double(self.sourceFont.lineHeight)
+      let padding = Double(self.textContainerInset.top + self.textContainerInset.bottom)
+      let contentHeight = max(Double(used.height), Double(self.layoutManager.extraLineFragmentRect.maxY), rowHeight)
+      let preferred = min(contentHeight, rowHeight * (p?.configuration.numberOfLines ?? 1)) + padding
       let width = Double(used.width + self.textContainerInset.left + self.textContainerInset.right)
-      let height = Double(used.height + self.textContainerInset.top + self.textContainerInset.bottom)
+      let height = contentHeight + padding
       let metricKey = "\(width):\(height):\(preferred):\(self.target)"
       if metricKey != self.lastMetrics { self.lastMetrics = metricKey; p?.onMetrics?(EditorMetrics(width: width, height: height, preferredHeight: preferred, target: self.target)) }
       let key = "\(self.eventCount):\(self.source):" + blocks.map { "\($0.start):\($0.end):\($0.active):\($0.x):\($0.y):\($0.width):\($0.height)" }.joined(separator: "|")

@@ -86,6 +86,10 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   private var substitutions: List<TypographySpan> = emptyList()
   private val replacements get() = previews + substitutions
   private var emitPosted = false
+  private var caretFollowPending = false
+  private var caretScrollPosted = false
+  private var manualScrollActive = false
+  private var lastPresentationKey: String? = null
   private var lastLayout: EditorLayout? = null
   private val density get() = resources.displayMetrics.density
   private val composing get() = BaseInputConnection.getComposingSpanStart(text) >= 0
@@ -105,8 +109,14 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
     val configChanged=appliedConfiguration!=next
     val styleChanged=appliedAttributes!=attributes || appliedFontSize!=fontSize
     if(!configChanged && !styleChanged)return
-    configuration=next
-    if(configChanged) {
+
+    configuration = next
+    if (configChanged) {
+      isVerticalScrollBarEnabled = next.scrollEnabled && next.multiline
+      isVerticalFadingEdgeEnabled = false
+      isHorizontalFadingEdgeEnabled = false
+      isScrollbarFadingEnabled = true
+      scrollBarFadeDuration = 250
       val cursorStart=selectionStart;val cursorEnd=selectionEnd
       val transform=transformationMethod
       val oldTypeface=typeface
@@ -133,7 +143,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
       inputType=flags
       transformationMethod=transform
       typeface=oldTypeface
-      minLines=next.numberOfLines.toInt().coerceAtLeast(1)
+      minLines=1
       maxLines=if(next.multiline)Int.MAX_VALUE else 1
       setHorizontallyScrolling(!next.multiline)
       if(!next.editable)keyListener=null
@@ -205,10 +215,11 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   init {
     ready = true
     gravity = Gravity.TOP or Gravity.START
-    setPadding((12*density).toInt(),(12*density).toInt(),(12*density).toInt(),(12*density).toInt())
-    setSingleLine(false)
-    inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+    // All typography, padding, and colors are supplied by React Native props.
+    setPadding(0, 0, 0, 0)
     background = null
+    isVerticalFadingEdgeEnabled = false
+    isHorizontalFadingEdgeEnabled = false
     setOnEditorActionListener {_,_,_ -> submitInput()}
     transformationMethod = object: TransformationMethod {
       override fun getTransformation(source: CharSequence, view: View): CharSequence = FoldedSource(source)
@@ -237,15 +248,26 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
         sizes.clear();sizes.putAll(nextSizes)
         analyzedSource=s.toString()
       }
+
       override fun afterTextChanged(s: Editable?) {
-        if(suppress || styling) return
+        if (suppress || styling) return
         ++eventCount
-        // Present projected ranges immediately, then reconcile with C++ results.
+        caretFollowPending = true
+
+        // Style only when the projected presentation actually changed.
         refreshPresentation()
+        scheduleCaretFollow()
         emitBlocks()
-        change?.invoke(EditorChange(text=s.toString(),eventCount=eventCount.toDouble(),target=id.toDouble(),selectionStart=selectionStart.toDouble(),selectionEnd=selectionEnd.toDouble()))
+        change?.invoke(EditorChange(
+          text = s.toString(),
+          eventCount = eventCount.toDouble(),
+          target = id.toDouble(),
+          selectionStart = selectionStart.toDouble(),
+          selectionEnd = selectionEnd.toDouble()
+        ))
         analyze()
       }
+
     })
   }
   fun setSource(value: String, acknowledged: Int) {
@@ -260,7 +282,10 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
     suppress=false
     eventCount=max(eventCount,acknowledged)
     ranges=emptyList();previews=emptyList();substitutions=emptyList()
+    lastPresentationKey = null
+    caretFollowPending = true
     analyze()
+    scheduleCaretFollow()
   }
   private var pendingExternal: Pair<String,Int>? = null
   fun setPreviewSizes(count: Int, values: List<Triple<Int,Int,Double>>) {
@@ -270,9 +295,12 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
       val pixels=max(1,(height*density).toInt())
       if(sizes[start to end]!=pixels) {sizes[start to end]=pixels;changed=true}
     }
-    if(changed) refreshPresentation()
+    if(changed) { lastPresentationKey = null; refreshPresentation(); caretFollowPending = true; scheduleCaretFollow() }
   }
-  fun restyle() { if(analyzedSource==text.toString()) refreshPresentation() else analyze() }
+  fun restyle() {
+    lastPresentationKey = null
+    if (analyzedSource == text.toString()) refreshPresentation() else analyze()
+  }
   private fun analyze() {
     val source=text.toString();val serial=++request
     work?.cancel(false)
@@ -301,10 +329,32 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
   private fun refreshPresentation() {
     if(styling || previewTouch != null || composing || analyzedSource!=text.toString()) return
     val editable=text ?: return
+    val inactive = ranges.filter {
+      previewsEnabled && configuration.multiline && it.kind in 21..23 && !isActive(it)
+    }
+    val typography = if (previewsEnabled && typographerEnabled) ranges.filter { range ->
+      range.kind in 100..111 && !isActive(range) &&
+        ranges.none { it.kind in 21..23 && range.start < it.end && range.end > it.start }
+    } else emptyList()
+    // Native Editable automatically shifts existing spans on edits. When the
+    // projected ranges haven't changed, don't tear down metric spans/reflow.
+    val key = buildString {
+      append(previewsEnabled); append(':'); append(configuration.multiline)
+      append(':'); append(typographerEnabled)
+      for (range in if (previewsEnabled) ranges else emptyList()) {
+        append('|'); append(range.start); append(','); append(range.end)
+        append(','); append(range.kind)
+      }
+      append("/fold")
+      for (range in inactive) { append('|'); append(range.start); append(','); append(range.end) }
+      append("/type")
+      for (range in typography) { append('|'); append(range.start); append(','); append(range.end) }
+    }
+    if (lastPresentationKey == key) return
     styling=true
     try {
       editable.getSpans(0,editable.length,EditorSpan::class.java).forEach { editable.removeSpan(it) }
-      val inactiveBlocks=ranges.filter {previewsEnabled && configuration.multiline && it.kind in 21..23 && !isActive(it)}
+      val inactiveBlocks=inactive
       for(range in if(previewsEnabled)ranges else emptyList()) {
         if(range.start<0 || range.end>editable.length || range.end<=range.start || (range.kind>=20 && range.kind !in 200..213))continue
         // Metric spans inside a collapsed replacement can split its reserved
@@ -330,11 +380,12 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
         }
       }
       previews=inactiveBlocks.map { PreviewSpan(it) }
-      substitutions=if(previewsEnabled && typographerEnabled)ranges.filter {range -> range.kind in 100..111 && !isActive(range) && ranges.none {it.kind in 21..23 && range.start<it.end && range.end>it.start}}.map {TypographySpan(it)} else emptyList()
+      substitutions=typography.map { TypographySpan(it) }
       // Metric-only span invalidation reflows the transformed text, preserving the
       // actual Editable, selection, native undo history and composing spans.
       editable.removeSpan(pulse)
       if(editable.isNotEmpty())editable.setSpan(pulse,0,editable.length,Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+      lastPresentationKey = key
       requestLayout();invalidate();emitBlocks()
     } finally { styling=false }
   }
@@ -377,25 +428,106 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
     }
     return handled
   }
-  override fun onSelectionChanged(start: Int,end: Int) {
-    super.onSelectionChanged(start,end)
-    // EditText invokes this during construction, before Kotlin fields initialize.
-    if(start<0 || end<0 || !ready) return
-    selection?.invoke(EditorSelection(start.toDouble(),end.toDouble()))
+  override fun onSelectionChanged(start: Int, end: Int) {
+    super.onSelectionChanged(start, end)
+    if (start < 0 || end < 0 || !ready) return
+    selection?.invoke(EditorSelection(start.toDouble(), end.toDouble()))
+    caretFollowPending = true
     refreshPresentation()
+    scheduleCaretFollow()
   }
-  override fun onFocusChanged(focused: Boolean,direction: Int,rect: Rect?) {
-    super.onFocusChanged(focused,direction,rect)
-    if(ready) {
-      focusChanged?.invoke(EditorFocus(text=text.toString(),eventCount=eventCount.toDouble(),target=id.toDouble(),focused=focused))
-      post { refreshPresentation() }
+
+  override fun onFocusChanged(focused: Boolean, direction: Int, rect: Rect?) {
+    super.onFocusChanged(focused, direction, rect)
+    if (!ready) return
+    if (focused) {
+      caretFollowPending = true
+      scheduleCaretFollow()
+    }
+    focusChanged?.invoke(EditorFocus(
+      text = text.toString(),
+      eventCount = eventCount.toDouble(),
+      target = id.toDouble(),
+      focused = focused
+    ))
+    post { refreshPresentation() }
+  }
+
+  override fun onScrollChanged(x: Int, y: Int, oldX: Int, oldY: Int) {
+    super.onScrollChanged(x, y, oldX, oldY)
+    if (ready) emitBlocks()
+  }
+
+  override fun onSizeChanged(w: Int, h: Int, oldW: Int, oldH: Int) {
+    super.onSizeChanged(w, h, oldW, oldH)
+    if (!ready) return
+    if (hasFocus() && (h != oldH || w != oldW)) {
+      caretFollowPending = true
+      scheduleCaretFollow()
+    }
+    emitBlocks()
+  }
+
+  override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    super.onLayout(changed, left, top, right, bottom)
+    if (!ready) return
+    if (changed && hasFocus()) caretFollowPending = true
+    scheduleCaretFollow()
+    emitBlocks()
+  }
+
+  private fun scheduleCaretFollow() {
+    if (!caretFollowPending || caretScrollPosted || !hasFocus() ||
+        !configuration.multiline || !configuration.scrollEnabled) return
+
+    caretScrollPosted = true
+    post {
+      caretScrollPosted = false
+      if (!caretFollowPending || !hasFocus() ||
+          !configuration.multiline || !configuration.scrollEnabled) return@post
+      val textLayout = layout ?: return@post
+      val viewport = (height - compoundPaddingTop - compoundPaddingBottom).coerceAtLeast(1)
+      val maxScroll = (textLayout.height - viewport).coerceAtLeast(0)
+      val maximumLines = configuration.numberOfLines.toInt().coerceAtLeast(1)
+
+      // React Native animates the view from one intrinsic height to the next.
+      // Until the configured line cap is exceeded, the apparent overflow is
+      // usually just the intermediate frame of that height animation.
+      if (textLayout.lineCount <= maximumLines) {
+        // Only compensate for an old overflow scroll after content contracts.
+        // Do not fight TextView's native small (~font padding) scroll offset.
+        if (manualScrollActive && maxScroll == 0) {
+          manualScrollActive = false
+          if (scrollY != 0) scrollTo(scrollX, 0)
+        }
+        caretFollowPending = false
+        return@post
+      }
+
+      if (maxScroll == 0) {
+        caretFollowPending = false
+        return@post
+      }
+
+      val offset = selectionEnd.coerceIn(0, text.length)
+      val line = textLayout.getLineForOffset(offset)
+      val top = textLayout.getLineTop(line)
+      val bottom = textLayout.getLineBottom(line)
+      val next = when {
+        bottom > scrollY + viewport -> bottom - viewport
+        top < scrollY -> top
+        else -> scrollY
+      }.coerceIn(0, maxScroll)
+
+      if (next != scrollY) {
+        scrollTo(scrollX, next)
+        awakenScrollBars()
+        manualScrollActive = true
+      }
+      caretFollowPending = false
     }
   }
-  override fun onScrollChanged(x: Int,y: Int,oldX: Int,oldY: Int) {super.onScrollChanged(x,y,oldX,oldY);emitBlocks()}
-  override fun onSizeChanged(w: Int,h: Int,oldW: Int,oldH: Int) {super.onSizeChanged(w,h,oldW,oldH);if(ready)emitBlocks()}
-  override fun onLayout(changed: Boolean,left: Int,top: Int,right: Int,bottom: Int) {
-    super.onLayout(changed,left,top,right,bottom);if(ready)emitBlocks()
-  }
+
   fun dispose() {++request;work?.cancel(false);change=null;selection=null;blocksChanged=null;focusChanged=null;submitted=null;touched=null;measured=null;blurInput()}
   private fun compositionEnded() {
     val pending=pendingExternal
@@ -429,7 +561,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
       val metrics=EditorMetrics(
         max(0,layout.width+paddingLeft+paddingRight)/density.toDouble(),
         (layout.height+compoundPaddingTop+compoundPaddingBottom)/density.toDouble(),
-        (lineHeight*configuration.numberOfLines+compoundPaddingTop+compoundPaddingBottom)/density.toDouble(),id.toDouble())
+        (min(max(layout.height,lineHeight).toDouble(),lineHeight*configuration.numberOfLines)+compoundPaddingTop+compoundPaddingBottom)/density.toDouble(),id.toDouble())
       if(metrics!=lastMetrics){lastMetrics=metrics;measured?.invoke(metrics)}
       val event=EditorLayout(text.toString(),eventCount.toDouble(),values)
       if(event!=lastLayout){lastLayout=event;blocksChanged?.invoke(event)}
@@ -472,6 +604,7 @@ internal class MarkdownEditorView(context: Context): EditText(context) {
     }
     override fun draw(canvas: Canvas,text: CharSequence,start: Int,end: Int,x: Float,top: Int,y: Int,bottom: Int,paint: Paint) {}
   }
+
   // Offset-preserving transformation: suppress internal newlines only in inactive
   // ranges. IME, selection and undo continue to operate on the original source.
   private inner class FoldedSource(val source: CharSequence): Spanned, GetChars {
